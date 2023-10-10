@@ -1,6 +1,6 @@
 # projects
 
-A new Flutter project.
+A cross-platform mobile game developed using Flutter to emulate the math game “24”. The goal is to use all 4 numbers with 5 possible operations (+,-,*,/,%) to arrive at the number 24.
 
 ## Getting Started
 
