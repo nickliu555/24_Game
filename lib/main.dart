@@ -150,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // return object of type Dialog
         return AlertDialog(
           backgroundColor: Colors.red,
-          content: Text('Sorry you cannot divide by zero',
+          content: const Text('Sorry you cannot divide by zero',
               style: TextStyle(color: Colors.white, fontSize: 30),
               textAlign: TextAlign.center),
           actions: <Widget>[
@@ -170,37 +170,34 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colors[randomColorIndex],
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.refresh),
-            color: Colors.white,
-            onPressed: () {
-              setState(() {
-                dices = [firstDice, secondDice, thirdDice, fourthDice];
-                numUsed = ['_', '_'];
-                numUsedIndex = [-1, -1];
-                usedDices = [false, false, false, false];
+          backgroundColor: colors[randomColorIndex],
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.refresh),
+              color: Colors.white,
+              onPressed: () {
+                setState(() {
+                  dices = [firstDice, secondDice, thirdDice, fourthDice];
+                  numUsed = ['_', '_'];
+                  numUsedIndex = [-1, -1];
+                  usedDices = [false, false, false, false];
 
-                operationUsed = '_';
+                  operationUsed = '_';
 
-                expectNum = true;
-                turn = 0;
+                  expectNum = true;
+                  turn = 0;
 
-                finalResult = 0;
-              });
-            },
-            tooltip: "Restart",
-          )
-        ],
-        title: Center(
-            child: Text(
-          "Welcome to 24",
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        )),
-      ),
+                  finalResult = 0;
+                });
+              },
+              tooltip: "Restart",
+            )
+          ],
+          title: Center(
+              child: const Text("Welcome to 24",
+                  style: TextStyle(
+                    color: Colors.white,
+                  )))),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -256,112 +253,117 @@ class _MyHomePageState extends State<MyHomePage> {
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
-                  child: TextButton(
-                    child: Text('+',
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: turn > 0 || expectNum
-                                ? Colors.grey
-                                : Colors.black)),
-                    onPressed: () {
-                      if (!expectNum && turn < 1) {
-                        setState(() {
-                          operationUsed = '+';
-                        });
-                        expectNum = true;
-                        turn++;
-                      }
-                    },
-                  )),
+                  child: OutlinedButton(
+                      onPressed: turn > 0 || expectNum
+                          ? null
+                          : () {
+                              if (!expectNum && turn < 1) {
+                                setState(() {
+                                  operationUsed = '+';
+                                });
+                                expectNum = true;
+                                turn++;
+                              }
+                            },
+                      child: Text('+',
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: turn > 0 || expectNum
+                                  ? Colors.grey
+                                  : Colors.black)))),
               const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
-                  child: TextButton(
-                    child: Text('-',
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: turn > 0 || expectNum
-                                ? Colors.grey
-                                : Colors.black)),
-                    onPressed: () {
-                      if (!expectNum && turn < 1) {
-                        setState(() {
-                          operationUsed = '-';
-                        });
-                        expectNum = true;
-                        turn++;
-                      }
-                    },
-                  )),
+                  child: OutlinedButton(
+                      onPressed: turn > 0 || expectNum
+                          ? null
+                          : () {
+                              if (!expectNum && turn < 1) {
+                                setState(() {
+                                  operationUsed = '-';
+                                });
+                                expectNum = true;
+                                turn++;
+                              }
+                            },
+                      child: Text('-',
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: turn > 0 || expectNum
+                                  ? Colors.grey
+                                  : Colors.black)))),
               const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
-                  child: TextButton(
-                    child: Text('*',
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: turn > 0 || expectNum
-                                ? Colors.grey
-                                : Colors.black)),
-                    onPressed: () {
-                      if (!expectNum && turn < 1) {
-                        setState(() {
-                          operationUsed = '*';
-                        });
-                        expectNum = true;
-                        turn++;
-                      }
-                    },
-                  )),
+                  child: OutlinedButton(
+                      onPressed: turn > 0 || expectNum
+                          ? null
+                          : () {
+                              if (!expectNum && turn < 1) {
+                                setState(() {
+                                  operationUsed = '×';
+                                });
+                                expectNum = true;
+                                turn++;
+                              }
+                            },
+                      child: Text('×',
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: turn > 0 || expectNum
+                                  ? Colors.grey
+                                  : Colors.black)))),
               const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
-                  child: TextButton(
-                    child: Text('/',
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: turn > 0 || expectNum
-                                ? Colors.grey
-                                : Colors.black)),
-                    onPressed: () {
-                      if (!expectNum && turn < 1) {
-                        setState(() {
-                          operationUsed = '/';
-                        });
-                        expectNum = true;
-                        turn++;
-                      }
-                    },
-                  )),
+                  child: OutlinedButton(
+                      onPressed: turn > 0 || expectNum
+                          ? null
+                          : () {
+                              if (!expectNum && turn < 1) {
+                                setState(() {
+                                  operationUsed = '÷';
+                                });
+                                expectNum = true;
+                                turn++;
+                              }
+                            },
+                      child: Text('÷',
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: turn > 0 || expectNum
+                                  ? Colors.grey
+                                  : Colors.black)))),
               const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
-                  child: TextButton(
-                    child: Text('%',
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: turn > 0 || expectNum
-                                ? Colors.grey
-                                : Colors.black)),
-                    onPressed: () {
-                      if (!expectNum && turn < 1) {
-                        setState(() {
-                          operationUsed = '%';
-                        });
-                        expectNum = true;
-                        turn++;
-                      }
-                    },
-                  )),
+                  child: OutlinedButton(
+                      onPressed: turn > 0 || expectNum
+                          ? null
+                          : () {
+                              if (!expectNum && turn < 1) {
+                                setState(() {
+                                  operationUsed = '%';
+                                });
+                                expectNum = true;
+                                turn++;
+                              }
+                            },
+                      child: Text('%',
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              color: turn > 0 || expectNum
+                                  ? Colors.grey
+                                  : Colors.black)))),
             ]),
             const Text(
               '\n\n',
@@ -395,10 +397,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         } else if (operationUsed == '-') {
                           finalResult =
                               int.parse(numUsed[0]) - int.parse(numUsed[1]);
-                        } else if (operationUsed == '*') {
+                        } else if (operationUsed == '×') {
                           finalResult =
                               int.parse(numUsed[0]) * int.parse(numUsed[1]);
-                        } else if (operationUsed == '/') {
+                        } else if (operationUsed == '÷') {
                           if (int.parse(numUsed[1]) != 0) {
                             finalResult = ((int.parse(numUsed[0]) /
                                         int.parse(numUsed[1])) -
@@ -408,6 +410,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             _showDivisionErrorMsg();
                             divisionError = true;
                           }
+                        } else if (operationUsed == '%') {
+                          finalResult =
+                              int.parse(numUsed[0]) % int.parse(numUsed[1]);
                         }
 
                         if (!divisionError) {
