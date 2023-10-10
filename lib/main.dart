@@ -73,21 +73,21 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: finalResult == 24 ? Colors.green : Colors.red,
           content: finalResult == 24
               ? Text(
-              'Congrats! You got 24!\nYour time was ' +
-                  timePassed.toString() +
-                  's',
-              style: TextStyle(color: Colors.white, fontSize: 30),
-              textAlign: TextAlign.center)
+                  'Congrats! You got 24!\nYour time was ' +
+                      timePassed.toString() +
+                      's',
+                  style: TextStyle(color: Colors.white, fontSize: 30),
+                  textAlign: TextAlign.center)
               : Text(
-              'Sorry, you did not get 24.\nYou got ' +
-                  finalResult.toString() +
-                  '.',
-              style: TextStyle(color: Colors.white, fontSize: 30),
-              textAlign: TextAlign.center),
+                  'Sorry, you did not get 24.\nYou got ' +
+                      finalResult.toString() +
+                      '.',
+                  style: TextStyle(color: Colors.white, fontSize: 30),
+                  textAlign: TextAlign.center),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new TextButton(
-              child: new Text("Continue"),
+            TextButton(
+              child: Text("Continue"),
               onPressed: () {
                 if (finalResult == 24) {
                   setState(() {
@@ -155,8 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
               textAlign: TextAlign.center),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new TextButton(
-                child: new Text("Continue"),
+            TextButton(
+                child: Text("Continue"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 }),
@@ -195,11 +195,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         title: Center(
             child: Text(
-              "Welcome to 24",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            )),
+          "Welcome to 24",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        )),
       ),
       body: Center(
         child: Column(
@@ -210,41 +210,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 150,
                 child: GridView.builder(
                     itemCount: dices.length,
-                    gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: dices.length,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      return new Row(
+                      return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             ButtonTheme(
                               minWidth: 50.0,
                               height: 50.0,
                               child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.black),
+                                onPressed: usedDices[index] ||
+                                        !expectNum ||
+                                        dices.length == 1
+                                    ? null
+                                    : () {
+                                        if (!usedDices[index] &&
+                                            expectNum &&
+                                            dices.length != 1) {
+                                          setState(() {
+                                            numUsed[turn] =
+                                                dices[index].toString();
+                                            numUsedIndex[turn] = index;
+                                          });
+                                          expectNum = false;
+                                          usedDices[index] = true;
+                                        }
+                                      },
                                 child: Text(
                                   dices[index].toString(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 20,
                                     color: Colors.white,
                                   ),
                                 ),
-                                // color: usedDices[index] ||
-                                //         !expectNum ||
-                                //         dices.length == 1
-                                //     ? Colors.grey
-                                //     : Colors.black,
-                                onPressed: () {
-                                  if (!usedDices[index] &&
-                                      expectNum &&
-                                      dices.length != 1) {
-                                    setState(() {
-                                      numUsed[turn] = dices[index].toString();
-                                      numUsedIndex[turn] = index;
-                                    });
-                                    expectNum = false;
-                                    usedDices[index] = true;
-                                  }
-                                },
                               ),
                             ),
                           ]);
@@ -272,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                   )),
-              Text("    "),
+              const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -294,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                   )),
-              Text("    "),
+              const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -316,7 +318,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                   )),
-              Text("    "),
+              const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -338,7 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                   )),
-              Text("    "),
+              const Text("    "),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -361,94 +363,96 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   )),
             ]),
-            Text(
+            const Text(
               '\n\n',
             ),
             //Result text
             dices.length == 1
                 ? Text(' ')
                 : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(numUsed[0] + ' ', style: TextStyle(fontSize: 26)),
-                  Text(operationUsed + ' ',
-                      style: TextStyle(fontSize: 26)),
-                  Text(numUsed[1], style: TextStyle(fontSize: 26))
-                ]),
-            Text(""),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                        Text(numUsed[0] + ' ', style: TextStyle(fontSize: 26)),
+                        Text(operationUsed + ' ',
+                            style: TextStyle(fontSize: 26)),
+                        Text(numUsed[1], style: TextStyle(fontSize: 26))
+                      ]),
+            const Text(""),
             ButtonTheme(
               minWidth: 48.0,
               height: 36.0,
               child: ElevatedButton(
-                child: Text(
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.green // Background color
+                    ),
+                onPressed: !done()
+                    ? null
+                    : () {
+                        bool divisionError = false;
+                        if (operationUsed == '+') {
+                          finalResult =
+                              int.parse(numUsed[0]) + int.parse(numUsed[1]);
+                        } else if (operationUsed == '-') {
+                          finalResult =
+                              int.parse(numUsed[0]) - int.parse(numUsed[1]);
+                        } else if (operationUsed == '*') {
+                          finalResult =
+                              int.parse(numUsed[0]) * int.parse(numUsed[1]);
+                        } else if (operationUsed == '/') {
+                          if (int.parse(numUsed[1]) != 0) {
+                            finalResult = ((int.parse(numUsed[0]) /
+                                        int.parse(numUsed[1])) -
+                                    0.5)
+                                .round();
+                          } else {
+                            _showDivisionErrorMsg();
+                            divisionError = true;
+                          }
+                        }
+
+                        if (!divisionError) {
+                          setState(() {
+                            List<int> tmp = [];
+                            tmp.add(finalResult);
+                            for (int i = 0; i < dices.length; i++) {
+                              if (i != numUsedIndex[0] && i != numUsedIndex[1])
+                                tmp.add(dices[i]);
+                            }
+                            dices = tmp;
+
+                            usedDices = [];
+                            for (int i = 0; i < dices.length; i++) {
+                              usedDices.add(false);
+                            }
+
+                            expectNum = true;
+                            turn = 0;
+                            numUsed = ['_', '_'];
+                            numUsedIndex = [-1, -1];
+                            operationUsed = '_';
+
+                            if (dices.length == 1) {
+                              if (finalResult == 24) {
+                                DateTime end = DateTime.now();
+                                timePassed = end.difference(start).inSeconds;
+                              }
+//                        Navigator.push(
+//                            context,
+//                            MaterialPageRoute(
+//                                builder: (context) => ViewResult()));
+
+                              _showResultDialog();
+                            }
+                          });
+                        }
+                      },
+                child: const Text(
                   'Submit',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,
                   ),
                 ),
-                // color: done() ? Colors.green : Colors.grey,
-                onPressed: () {
-                  bool divisionError = false;
-                  if (done()) {
-                    if (operationUsed == '+') {
-                      finalResult =
-                          int.parse(numUsed[0]) + int.parse(numUsed[1]);
-                    } else if (operationUsed == '-') {
-                      finalResult =
-                          int.parse(numUsed[0]) - int.parse(numUsed[1]);
-                    } else if (operationUsed == '*') {
-                      finalResult =
-                          int.parse(numUsed[0]) * int.parse(numUsed[1]);
-                    } else if (operationUsed == '/') {
-                      if (int.parse(numUsed[1]) != 0) {
-                        finalResult =
-                            ((int.parse(numUsed[0]) / int.parse(numUsed[1])) -
-                                0.5)
-                                .round();
-                      } else {
-                        _showDivisionErrorMsg();
-                        divisionError = true;
-                      }
-                    }
-
-                    if (!divisionError) {
-                      setState(() {
-                        List<int> tmp = [];
-                        tmp.add(finalResult);
-                        for (int i = 0; i < dices.length; i++) {
-                          if (i != numUsedIndex[0] && i != numUsedIndex[1])
-                            tmp.add(dices[i]);
-                        }
-                        dices = tmp;
-
-                        usedDices = [];
-                        for (int i = 0; i < dices.length; i++) {
-                          usedDices.add(false);
-                        }
-
-                        expectNum = true;
-                        turn = 0;
-                        numUsed = ['_', '_'];
-                        numUsedIndex = [-1, -1];
-                        operationUsed = '_';
-
-                        if (dices.length == 1) {
-                          if (finalResult == 24) {
-                            DateTime end = DateTime.now();
-                            timePassed = end.difference(start).inSeconds;
-                          }
-//                        Navigator.push(
-//                            context,
-//                            MaterialPageRoute(
-//                                builder: (context) => ViewResult()));
-
-                          _showResultDialog();
-                        }
-                      });
-                    }
-                  }
-                },
               ),
             ),
           ],
@@ -487,7 +491,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         tooltip: 'Next Game',
-        child: Icon(Icons.arrow_forward),
+        child: const Icon(Icons.arrow_forward),
       ),
     );
   }
