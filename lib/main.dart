@@ -11,8 +11,7 @@ int fourthDice = rng.nextInt(9) + 1;
 List<int> dices = [firstDice, secondDice, thirdDice, fourthDice];
 
 List<bool> usedDices = [false, false, false, false];
-List<String> numUsed = ['_', '_'];
-List<int> numUsedIndex = [-1, -1];
+List<int> diceUsedIndex = [-1, -1];
 String operationUsed = '_';
 
 bool expectNum = true;
@@ -60,7 +59,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool done() {
-    return turn >= 1 && numUsedIndex[1] != -1;
+    return turn >= 1 && diceUsedIndex[1] != -1;
   }
 
   void _showResultDialog() {
@@ -98,8 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                     dices = [firstDice, secondDice, thirdDice, fourthDice];
                     usedDices = [false, false, false, false];
-                    numUsed = ['_', '_'];
-                    numUsedIndex = [-1, -1];
+                    diceUsedIndex = [-1, -1];
 
                     operationUsed = '_';
 
@@ -121,8 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 } else {
                   setState(() {
                     dices = [firstDice, secondDice, thirdDice, fourthDice];
-                    numUsed = ['_', '_'];
-                    numUsedIndex = [-1, -1];
+                    diceUsedIndex = [-1, -1];
                     usedDices = [false, false, false, false];
 
                     operationUsed = '_';
@@ -178,8 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 setState(() {
                   dices = [firstDice, secondDice, thirdDice, fourthDice];
-                  numUsed = ['_', '_'];
-                  numUsedIndex = [-1, -1];
+                  diceUsedIndex = [-1, -1];
                   usedDices = [false, false, false, false];
 
                   operationUsed = '_';
@@ -229,9 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             expectNum &&
                                             dices.length != 1) {
                                           setState(() {
-                                            numUsed[turn] =
-                                                dices[index].toString();
-                                            numUsedIndex[turn] = index;
+                                            diceUsedIndex[turn] = index;
                                           });
                                           expectNum = false;
                                           usedDices[index] = true;
@@ -374,10 +368,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                        Text(numUsed[0] + ' ', style: TextStyle(fontSize: 26)),
-                        Text(operationUsed + ' ',
+                        Text(
+                            diceUsedIndex[0] == -1
+                                ? "_  "
+                                : dices[diceUsedIndex[0]].toString() + "  ",
                             style: TextStyle(fontSize: 26)),
-                        Text(numUsed[1], style: TextStyle(fontSize: 26))
+                        Text(operationUsed + "  ",
+                            style: TextStyle(fontSize: 26)),
+                        Text(
+                            diceUsedIndex[1] == -1
+                                ? "_"
+                                : dices[diceUsedIndex[1]].toString(),
+                            style: TextStyle(fontSize: 26))
                       ]),
             const Text(""),
             ButtonTheme(
@@ -393,26 +395,25 @@ class _MyHomePageState extends State<MyHomePage> {
                         bool divisionError = false;
                         if (operationUsed == '+') {
                           finalResult =
-                              int.parse(numUsed[0]) + int.parse(numUsed[1]);
+                              dices[diceUsedIndex[0]] + dices[diceUsedIndex[1]];
                         } else if (operationUsed == '-') {
                           finalResult =
-                              int.parse(numUsed[0]) - int.parse(numUsed[1]);
+                              dices[diceUsedIndex[0]] - dices[diceUsedIndex[1]];
                         } else if (operationUsed == '×') {
                           finalResult =
-                              int.parse(numUsed[0]) * int.parse(numUsed[1]);
+                              dices[diceUsedIndex[0]] * dices[diceUsedIndex[1]];
                         } else if (operationUsed == '÷') {
-                          if (int.parse(numUsed[1]) != 0) {
-                            finalResult = ((int.parse(numUsed[0]) /
-                                        int.parse(numUsed[1])) -
-                                    0.5)
-                                .round();
+                          if (dices[diceUsedIndex[1]] != 0) {
+                            finalResult = (dices[diceUsedIndex[0]] /
+                                    dices[diceUsedIndex[1]])
+                                .toInt();
                           } else {
                             _showDivisionErrorMsg();
                             divisionError = true;
                           }
                         } else if (operationUsed == '%') {
                           finalResult =
-                              int.parse(numUsed[0]) % int.parse(numUsed[1]);
+                              dices[diceUsedIndex[0]] % dices[diceUsedIndex[1]];
                         }
 
                         if (!divisionError) {
@@ -420,8 +421,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             List<int> tmp = [];
                             tmp.add(finalResult);
                             for (int i = 0; i < dices.length; i++) {
-                              if (i != numUsedIndex[0] && i != numUsedIndex[1])
-                                tmp.add(dices[i]);
+                              if (i != diceUsedIndex[0] &&
+                                  i != diceUsedIndex[1]) tmp.add(dices[i]);
                             }
                             dices = tmp;
 
@@ -432,8 +433,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                             expectNum = true;
                             turn = 0;
-                            numUsed = ['_', '_'];
-                            numUsedIndex = [-1, -1];
+                            diceUsedIndex = [-1, -1];
                             operationUsed = '_';
 
                             if (dices.length == 1) {
@@ -474,8 +474,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             dices = [firstDice, secondDice, thirdDice, fourthDice];
             usedDices = [false, false, false, false];
-            numUsed = ['_', '_'];
-            numUsedIndex = [-1, -1];
+            diceUsedIndex = [-1, -1];
 
             operationUsed = '_';
 
