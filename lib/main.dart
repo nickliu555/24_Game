@@ -213,7 +213,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             ButtonTheme(
                               minWidth: 50.0,
                               height: 50.0,
-                              child: ElevatedButton(
+                              child: Visibility(
+                                  visible: dices[index]==-1 ? false : true,
+                                  child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.black),
                                 onPressed: usedDices[index] ||
@@ -238,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     color: Colors.white,
                                   ),
                                 ),
-                              ),
+                              ))
                             ),
                           ]);
                     })),
@@ -418,13 +420,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
                         if (!divisionError) {
                           setState(() {
-                            List<int> tmp = [];
-                            tmp.add(finalResult);
-                            for (int i = 0; i < dices.length; i++) {
-                              if (i != diceUsedIndex[0] &&
-                                  i != diceUsedIndex[1]) tmp.add(dices[i]);
-                            }
-                            dices = tmp;
+                            dices[diceUsedIndex[0]] = finalResult;
+                            dices[diceUsedIndex[1]] = -1;
 
                             usedDices = [];
                             for (int i = 0; i < dices.length; i++) {
@@ -436,16 +433,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             diceUsedIndex = [-1, -1];
                             operationUsed = '_';
 
-                            if (dices.length == 1) {
+                            int numDiceLeft = 4;
+                            for (int die in dices) {
+                              if (die == -1) {
+                                --numDiceLeft;
+                              }
+                            }
+                            if (numDiceLeft <= 1) {
                               if (finalResult == 24) {
                                 DateTime end = DateTime.now();
                                 timePassed = end.difference(start).inSeconds;
                               }
-//                        Navigator.push(
-//                            context,
-//                            MaterialPageRoute(
-//                                builder: (context) => ViewResult()));
-
                               _showResultDialog();
                             }
                           });
