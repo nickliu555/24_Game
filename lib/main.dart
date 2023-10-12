@@ -25,7 +25,7 @@ List colors = [
   Colors.green,
   Colors.blue,
   Colors.purple,
-  Colors.black,
+  Colors.brown
 ];
 int randomColorIndex = rng.nextInt(6);
 
@@ -198,9 +198,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Dice buttons
+            // DICE BUTTONS
             Container(
-                height: 150,
+                height: 100,
                 child: GridView.builder(
                     itemCount: dices.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -243,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ))),
                           ]);
                     })),
-            //Operation buttons
+            // OPERATION BUTTONS
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               ButtonTheme(
                   minWidth: 50.0,
@@ -267,7 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              const Text("    "),
+              Padding(padding: EdgeInsets.only(right: 15.0)),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -290,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              const Text("    "),
+              Padding(padding: EdgeInsets.only(right: 15.0)),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -313,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              const Text("    "),
+              Padding(padding: EdgeInsets.only(right: 15.0)),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -336,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              const Text("    "),
+              Padding(padding: EdgeInsets.only(right: 15.0)),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -360,29 +360,33 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ? Colors.grey
                                   : Colors.black)))),
             ]),
-            const Text(
-              '\n\n',
-            ),
-            //Result text
+            Padding(padding: EdgeInsets.only(bottom: 50.0)),
+            // RESULT TEXT
             dices.length == 1
                 ? Text(' ')
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                        Text(
-                            diceUsedIndex[0] == -1
-                                ? "_  "
-                                : dices[diceUsedIndex[0]].toString() + "  ",
-                            style: TextStyle(fontSize: 26)),
-                        Text(operationUsed + "  ",
-                            style: TextStyle(fontSize: 26)),
-                        Text(
-                            diceUsedIndex[1] == -1
-                                ? "_"
-                                : dices[diceUsedIndex[1]].toString(),
-                            style: TextStyle(fontSize: 26))
+                        Padding(
+                            padding: EdgeInsets.only(right: 10.0, bottom: 30.0),
+                            child: Text(
+                                diceUsedIndex[0] == -1
+                                    ? "_"
+                                    : dices[diceUsedIndex[0]].toString(),
+                                style: TextStyle(fontSize: 26))),
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 10.0, right: 10.0, bottom: 30.0),
+                            child: Text(operationUsed,
+                                style: TextStyle(fontSize: 26))),
+                        Padding(
+                            padding: EdgeInsets.only(left: 10.0, bottom: 30.0),
+                            child: Text(
+                                diceUsedIndex[1] == -1
+                                    ? "_"
+                                    : dices[diceUsedIndex[1]].toString(),
+                                style: TextStyle(fontSize: 26)))
                       ]),
-            const Text(""),
             ButtonTheme(
               minWidth: 48.0,
               height: 36.0,
