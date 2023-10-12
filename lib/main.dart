@@ -30,7 +30,8 @@ List colors = [
 int randomColorIndex = rng.nextInt(6);
 
 DateTime start = DateTime.now();
-int timePassed = 0;
+int timePassedSeconds = 0;
+int timePassedMinutes = 0;
 
 void main() {
   start = DateTime.now();
@@ -62,10 +63,56 @@ class _MyHomePageState extends State<MyHomePage> {
     return turn >= 1 && diceUsedIndex[1] != -1;
   }
 
+  void _refreshSetState() {
+    setState(() {
+      dices = [firstDice, secondDice, thirdDice, fourthDice];
+      diceUsedIndex = [-1, -1];
+      usedDices = [false, false, false, false];
+
+      operationUsed = '_';
+
+      expectNum = true;
+      turn = 0;
+
+      finalResult = 0;
+    });
+  }
+
+  void _nextGameSetState() {
+    setState(() {
+      firstDice = rng.nextInt(9) + 1;
+      secondDice = rng.nextInt(9) + 1;
+      thirdDice = rng.nextInt(9) + 1;
+      fourthDice = rng.nextInt(9) + 1;
+
+      dices = [firstDice, secondDice, thirdDice, fourthDice];
+      usedDices = [false, false, false, false];
+      diceUsedIndex = [-1, -1];
+
+      operationUsed = '_';
+
+      expectNum = true;
+      turn = 0;
+
+      finalResult = 0;
+
+      int prevColorIndex = randomColorIndex;
+      int colorIndex = rng.nextInt(6);
+      // makes sure next random color is diff than previous one
+      while (colorIndex == prevColorIndex) {
+        colorIndex = rng.nextInt(6);
+      }
+      randomColorIndex = colorIndex;
+
+      start = DateTime.now();
+    });
+  }
+
   void _showResultDialog() {
     // flutter defined function
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
@@ -73,8 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
           content: finalResult == 24
               ? Text(
                   'Congrats! You got 24!\nYour time was ' +
-                      timePassed.toString() +
-                      's',
+                      timePassedMinutes.toString().padLeft(2, "0") +
+                      ":" +
+                      timePassedSeconds.toString().padLeft(2, "0"),
                   style: TextStyle(color: Colors.white, fontSize: 30),
                   textAlign: TextAlign.center)
               : Text(
@@ -89,46 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Continue"),
               onPressed: () {
                 if (finalResult == 24) {
-                  setState(() {
-                    firstDice = rng.nextInt(9) + 1;
-                    secondDice = rng.nextInt(9) + 1;
-                    thirdDice = rng.nextInt(9) + 1;
-                    fourthDice = rng.nextInt(9) + 1;
-
-                    dices = [firstDice, secondDice, thirdDice, fourthDice];
-                    usedDices = [false, false, false, false];
-                    diceUsedIndex = [-1, -1];
-
-                    operationUsed = '_';
-
-                    expectNum = true;
-                    turn = 0;
-
-                    finalResult = 0;
-
-                    int prevColorIndex = randomColorIndex;
-                    int colorIndex = rng.nextInt(6);
-                    // makes sure next random color is diff than previous one
-                    while (colorIndex == prevColorIndex) {
-                      colorIndex = rng.nextInt(6);
-                    }
-                    randomColorIndex = colorIndex;
-
-                    start = DateTime.now();
-                  });
+                  _nextGameSetState();
                 } else {
-                  setState(() {
-                    dices = [firstDice, secondDice, thirdDice, fourthDice];
-                    diceUsedIndex = [-1, -1];
-                    usedDices = [false, false, false, false];
-
-                    operationUsed = '_';
-
-                    expectNum = true;
-                    turn = 0;
-
-                    finalResult = 0;
-                  });
+                  _refreshSetState();
                 }
                 Navigator.of(context).pop();
               },
@@ -173,18 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.refresh),
               color: Colors.white,
               onPressed: () {
-                setState(() {
-                  dices = [firstDice, secondDice, thirdDice, fourthDice];
-                  diceUsedIndex = [-1, -1];
-                  usedDices = [false, false, false, false];
-
-                  operationUsed = '_';
-
-                  expectNum = true;
-                  turn = 0;
-
-                  finalResult = 0;
-                });
+                _refreshSetState();
               },
               tooltip: "Restart",
             )
@@ -211,37 +211,36 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             ButtonTheme(
-                              minWidth: 50.0,
-                              height: 50.0,
-                              child: Visibility(
-                                  visible: dices[index]==-1 ? false : true,
-                                  child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.black),
-                                onPressed: usedDices[index] ||
-                                        !expectNum ||
-                                        dices.length == 1
-                                    ? null
-                                    : () {
-                                        if (!usedDices[index] &&
-                                            expectNum &&
-                                            dices.length != 1) {
-                                          setState(() {
-                                            diceUsedIndex[turn] = index;
-                                          });
-                                          expectNum = false;
-                                          usedDices[index] = true;
-                                        }
-                                      },
-                                child: Text(
-                                  dices[index].toString(),
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ))
-                            ),
+                                minWidth: 50.0,
+                                height: 50.0,
+                                child: Visibility(
+                                    visible: dices[index] == -1 ? false : true,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.black),
+                                      onPressed: usedDices[index] ||
+                                              !expectNum ||
+                                              dices.length == 1
+                                          ? null
+                                          : () {
+                                              if (!usedDices[index] &&
+                                                  expectNum &&
+                                                  dices.length != 1) {
+                                                setState(() {
+                                                  diceUsedIndex[turn] = index;
+                                                });
+                                                expectNum = false;
+                                                usedDices[index] = true;
+                                              }
+                                            },
+                                      child: Text(
+                                        dices[index].toString(),
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ))),
                           ]);
                     })),
             //Operation buttons
@@ -408,7 +407,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           if (dices[diceUsedIndex[1]] != 0) {
                             finalResult = (dices[diceUsedIndex[0]] /
                                     dices[diceUsedIndex[1]])
-                                .toInt();
+                                .truncate();
                           } else {
                             _showDivisionErrorMsg();
                             divisionError = true;
@@ -442,7 +441,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             if (numDiceLeft <= 1) {
                               if (finalResult == 24) {
                                 DateTime end = DateTime.now();
-                                timePassed = end.difference(start).inSeconds;
+                                timePassedSeconds =
+                                    end.difference(start).inSeconds;
+
+                                timePassedMinutes =
+                                    (timePassedSeconds / 60).truncate();
+                                timePassedSeconds = timePassedSeconds % 60;
                               }
                               _showResultDialog();
                             }
@@ -464,33 +468,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: colors[randomColorIndex],
         onPressed: () {
-          setState(() {
-            firstDice = rng.nextInt(9) + 1;
-            secondDice = rng.nextInt(9) + 1;
-            thirdDice = rng.nextInt(9) + 1;
-            fourthDice = rng.nextInt(9) + 1;
-
-            dices = [firstDice, secondDice, thirdDice, fourthDice];
-            usedDices = [false, false, false, false];
-            diceUsedIndex = [-1, -1];
-
-            operationUsed = '_';
-
-            expectNum = true;
-            turn = 0;
-
-            finalResult = 0;
-
-            int prevColorIndex = randomColorIndex;
-            int colorIndex = rng.nextInt(6);
-            // makes sure next random color is diff than previous one
-            while (colorIndex == prevColorIndex) {
-              colorIndex = rng.nextInt(6);
-            }
-            randomColorIndex = colorIndex;
-
-            start = DateTime.now();
-          });
+          _nextGameSetState();
         },
         tooltip: 'Next Game',
         child: const Icon(Icons.arrow_forward),
