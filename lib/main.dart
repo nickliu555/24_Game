@@ -3,15 +3,15 @@ import 'dart:math';
 
 var rng = new Random();
 
-int firstDice = rng.nextInt(9) + 1;
-int secondDice = rng.nextInt(9) + 1;
-int thirdDice = rng.nextInt(9) + 1;
-int fourthDice = rng.nextInt(9) + 1;
+int firstNum = rng.nextInt(9) + 1;
+int secondNum = rng.nextInt(9) + 1;
+int thirdNum = rng.nextInt(9) + 1;
+int fourthNum = rng.nextInt(9) + 1;
 
-List<int> dices = [firstDice, secondDice, thirdDice, fourthDice];
+List<int> nums = [firstNum, secondNum, thirdNum, fourthNum];
 
-List<bool> usedDices = [false, false, false, false];
-List<int> diceUsedIndex = [-1, -1];
+List<bool> isNumUsedIndexes = [false, false, false, false];
+List<int> numCurrentlyUsedIndexes = [-1, -1];
 String operationUsed = '_';
 
 bool expectNum = true;
@@ -29,12 +29,12 @@ List colors = [
 ];
 int randomColorIndex = rng.nextInt(6);
 
-DateTime start = DateTime.now();
+DateTime startTime = DateTime.now();
 int timePassedSeconds = 0;
 int timePassedMinutes = 0;
 
 void main() {
-  start = DateTime.now();
+  startTime = DateTime.now();
   runApp(MyApp());
 }
 
@@ -60,14 +60,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool done() {
-    return turn >= 1 && diceUsedIndex[1] != -1;
+    return turn >= 1 && numCurrentlyUsedIndexes[1] != -1;
   }
 
   void _refreshSetState() {
     setState(() {
-      dices = [firstDice, secondDice, thirdDice, fourthDice];
-      diceUsedIndex = [-1, -1];
-      usedDices = [false, false, false, false];
+      nums = [firstNum, secondNum, thirdNum, fourthNum];
+      numCurrentlyUsedIndexes = [-1, -1];
+      isNumUsedIndexes = [false, false, false, false];
 
       operationUsed = '_';
 
@@ -80,14 +80,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _nextGameSetState() {
     setState(() {
-      firstDice = rng.nextInt(9) + 1;
-      secondDice = rng.nextInt(9) + 1;
-      thirdDice = rng.nextInt(9) + 1;
-      fourthDice = rng.nextInt(9) + 1;
+      firstNum = rng.nextInt(9) + 1;
+      secondNum = rng.nextInt(9) + 1;
+      thirdNum = rng.nextInt(9) + 1;
+      fourthNum = rng.nextInt(9) + 1;
 
-      dices = [firstDice, secondDice, thirdDice, fourthDice];
-      usedDices = [false, false, false, false];
-      diceUsedIndex = [-1, -1];
+      nums = [firstNum, secondNum, thirdNum, fourthNum];
+      isNumUsedIndexes = [false, false, false, false];
+      numCurrentlyUsedIndexes = [-1, -1];
 
       operationUsed = '_';
 
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       randomColorIndex = colorIndex;
 
-      start = DateTime.now();
+      startTime = DateTime.now();
     });
   }
 
@@ -116,6 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
           backgroundColor: finalResult == 24 ? Colors.green : Colors.red,
           content: finalResult == 24
               ? Text(
@@ -190,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ],
           title: Center(
-              child: const Text("Welcome to 24",
+              child: const Text("24 Game",
                   style: TextStyle(
                     color: Colors.white,
                   )))),
@@ -202,9 +205,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
                 height: 100,
                 child: GridView.builder(
-                    itemCount: dices.length,
+                    itemCount: nums.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: dices.length,
+                      crossAxisCount: nums.length,
                     ),
                     itemBuilder: (BuildContext context, int index) {
                       return Row(
@@ -214,27 +217,27 @@ class _MyHomePageState extends State<MyHomePage> {
                                 minWidth: 50.0,
                                 height: 50.0,
                                 child: Visibility(
-                                    visible: dices[index] == -1 ? false : true,
+                                    visible: nums[index] == -1 ? false : true,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           primary: Colors.black),
-                                      onPressed: usedDices[index] ||
+                                      onPressed: isNumUsedIndexes[index] ||
                                               !expectNum ||
-                                              dices.length == 1
+                                              nums.length == 1
                                           ? null
                                           : () {
-                                              if (!usedDices[index] &&
+                                              if (!isNumUsedIndexes[index] &&
                                                   expectNum &&
-                                                  dices.length != 1) {
+                                                  nums.length != 1) {
                                                 setState(() {
-                                                  diceUsedIndex[turn] = index;
+                                                  numCurrentlyUsedIndexes[turn] = index;
                                                 });
                                                 expectNum = false;
-                                                usedDices[index] = true;
+                                                isNumUsedIndexes[index] = true;
                                               }
                                             },
                                       child: Text(
-                                        dices[index].toString(),
+                                        nums[index].toString(),
                                         style: const TextStyle(
                                           fontSize: 20,
                                           color: Colors.white,
@@ -358,11 +361,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               fontWeight: FontWeight.bold,
                               color: turn > 0 || expectNum
                                   ? Colors.grey
-                                  : Colors.black)))),
+                                  : Colors.black))))
             ]),
             Padding(padding: EdgeInsets.only(bottom: 50.0)),
             // RESULT TEXT
-            dices.length == 1
+            nums.length == 1
                 ? Text(' ')
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -370,9 +373,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                             padding: EdgeInsets.only(right: 10.0, bottom: 30.0),
                             child: Text(
-                                diceUsedIndex[0] == -1
+                                numCurrentlyUsedIndexes[0] == -1
                                     ? "_"
-                                    : dices[diceUsedIndex[0]].toString(),
+                                    : nums[numCurrentlyUsedIndexes[0]].toString(),
                                 style: TextStyle(fontSize: 26))),
                         Padding(
                             padding: EdgeInsets.only(
@@ -382,9 +385,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         Padding(
                             padding: EdgeInsets.only(left: 10.0, bottom: 30.0),
                             child: Text(
-                                diceUsedIndex[1] == -1
+                                numCurrentlyUsedIndexes[1] == -1
                                     ? "_"
-                                    : dices[diceUsedIndex[1]].toString(),
+                                    : nums[numCurrentlyUsedIndexes[1]].toString(),
                                 style: TextStyle(fontSize: 26)))
                       ]),
             ButtonTheme(
@@ -400,17 +403,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         bool divisionError = false;
                         if (operationUsed == '+') {
                           finalResult =
-                              dices[diceUsedIndex[0]] + dices[diceUsedIndex[1]];
+                              nums[numCurrentlyUsedIndexes[0]] + nums[numCurrentlyUsedIndexes[1]];
                         } else if (operationUsed == '-') {
                           finalResult =
-                              dices[diceUsedIndex[0]] - dices[diceUsedIndex[1]];
+                              nums[numCurrentlyUsedIndexes[0]] - nums[numCurrentlyUsedIndexes[1]];
                         } else if (operationUsed == '×') {
                           finalResult =
-                              dices[diceUsedIndex[0]] * dices[diceUsedIndex[1]];
+                              nums[numCurrentlyUsedIndexes[0]] * nums[numCurrentlyUsedIndexes[1]];
                         } else if (operationUsed == '÷') {
-                          if (dices[diceUsedIndex[1]] != 0) {
-                            finalResult = (dices[diceUsedIndex[0]] /
-                                    dices[diceUsedIndex[1]])
+                          if (nums[numCurrentlyUsedIndexes[1]] != 0) {
+                            finalResult = (nums[numCurrentlyUsedIndexes[0]] /
+                                    nums[numCurrentlyUsedIndexes[1]])
                                 .truncate();
                           } else {
                             _showDivisionErrorMsg();
@@ -418,26 +421,26 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         } else if (operationUsed == '%') {
                           finalResult =
-                              dices[diceUsedIndex[0]] % dices[diceUsedIndex[1]];
+                              nums[numCurrentlyUsedIndexes[0]] % nums[numCurrentlyUsedIndexes[1]];
                         }
 
                         if (!divisionError) {
                           setState(() {
-                            dices[diceUsedIndex[0]] = finalResult;
-                            dices[diceUsedIndex[1]] = -1;
+                            nums[numCurrentlyUsedIndexes[0]] = finalResult;
+                            nums[numCurrentlyUsedIndexes[1]] = -1;
 
-                            usedDices = [];
-                            for (int i = 0; i < dices.length; i++) {
-                              usedDices.add(false);
+                            isNumUsedIndexes = [];
+                            for (int i = 0; i < nums.length; i++) {
+                              isNumUsedIndexes.add(false);
                             }
 
                             expectNum = true;
                             turn = 0;
-                            diceUsedIndex = [-1, -1];
+                            numCurrentlyUsedIndexes = [-1, -1];
                             operationUsed = '_';
 
                             int numDiceLeft = 4;
-                            for (int die in dices) {
+                            for (int die in nums) {
                               if (die == -1) {
                                 --numDiceLeft;
                               }
@@ -446,7 +449,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               if (finalResult == 24) {
                                 DateTime end = DateTime.now();
                                 timePassedSeconds =
-                                    end.difference(start).inSeconds;
+                                    end.difference(startTime).inSeconds;
 
                                 timePassedMinutes =
                                     (timePassedSeconds / 60).truncate();
