@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'data.dart';
 
 var rng = new Random();
 
-int firstNum = rng.nextInt(9) + 1;
-int secondNum = rng.nextInt(9) + 1;
-int thirdNum = rng.nextInt(9) + 1;
-int fourthNum = rng.nextInt(9) + 1;
+List<List<int>> allSolvableProblems = getProblems();
+int randomProblemIndex = rng.nextInt(allSolvableProblems.length);
+Set<int> problemIndexSeen = {randomProblemIndex};
 
-List<int> nums = [firstNum, secondNum, thirdNum, fourthNum];
+int firstNum = allSolvableProblems[randomProblemIndex][0];
+int secondNum = allSolvableProblems[randomProblemIndex][1];
+int thirdNum = allSolvableProblems[randomProblemIndex][2];
+int fourthNum = allSolvableProblems[randomProblemIndex][3];
+
+List<double> nums = [
+  firstNum.toDouble(),
+  secondNum.toDouble(),
+  thirdNum.toDouble(),
+  fourthNum.toDouble()
+];
 
 List<bool> isNumUsedIndexes = [false, false, false, false];
 List<int> numCurrentlyUsedIndexes = [-1, -1];
@@ -17,7 +27,7 @@ String operationUsed = '_';
 bool expectNum = true;
 int turn = 0;
 
-int finalResult = 0;
+double finalResult = 0;
 
 List colors = [
   Colors.red,
@@ -65,7 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _refreshSetState() {
     setState(() {
-      nums = [firstNum, secondNum, thirdNum, fourthNum];
+      nums = [
+        firstNum.toDouble(),
+        secondNum.toDouble(),
+        thirdNum.toDouble(),
+        fourthNum.toDouble()
+      ];
       numCurrentlyUsedIndexes = [-1, -1];
       isNumUsedIndexes = [false, false, false, false];
 
@@ -80,12 +95,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _nextGameSetState() {
     setState(() {
-      firstNum = rng.nextInt(9) + 1;
-      secondNum = rng.nextInt(9) + 1;
-      thirdNum = rng.nextInt(9) + 1;
-      fourthNum = rng.nextInt(9) + 1;
+      int newRandomProblemIndex = rng.nextInt(allSolvableProblems.length);
+      // make sure new problem is not seen before
+      while (problemIndexSeen.contains(newRandomProblemIndex)) {
+        newRandomProblemIndex = rng.nextInt(allSolvableProblems.length);
+      }
+      randomProblemIndex = newRandomProblemIndex;
+      problemIndexSeen.add(newRandomProblemIndex);
 
-      nums = [firstNum, secondNum, thirdNum, fourthNum];
+      firstNum = allSolvableProblems[randomProblemIndex][0];
+      secondNum = allSolvableProblems[randomProblemIndex][1];
+      thirdNum = allSolvableProblems[randomProblemIndex][2];
+      fourthNum = allSolvableProblems[randomProblemIndex][3];
+
+      nums = [
+        firstNum.toDouble(),
+        secondNum.toDouble(),
+        thirdNum.toDouble(),
+        fourthNum.toDouble()
+      ];
       isNumUsedIndexes = [false, false, false, false];
       numCurrentlyUsedIndexes = [-1, -1];
 
@@ -128,12 +156,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       timePassedSeconds.toString().padLeft(2, "0"),
                   style: TextStyle(color: Colors.white, fontSize: 30),
                   textAlign: TextAlign.center)
-              : Text(
-                  'Sorry, you did not get 24.\nYou got ' +
-                      finalResult.toString() +
-                      '.',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
-                  textAlign: TextAlign.center),
+              : finalResult == finalResult.roundToDouble()
+                  ? Text(
+                      'Sorry, you did not get 24.\nYou got ' +
+                          finalResult.toInt().toString(),
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                      textAlign: TextAlign.center)
+                  : Text(
+                      'Sorry, you did not get 24.\nYou got ' +
+                          finalResult.toStringAsFixed(2),
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                      textAlign: TextAlign.center),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             TextButton(
@@ -201,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // DICE BUTTONS
+            // NUM BUTTONS
             Container(
                 height: 100,
                 child: GridView.builder(
@@ -230,14 +263,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   expectNum &&
                                                   nums.length != 1) {
                                                 setState(() {
-                                                  numCurrentlyUsedIndexes[turn] = index;
+                                                  numCurrentlyUsedIndexes[
+                                                      turn] = index;
                                                 });
                                                 expectNum = false;
                                                 isNumUsedIndexes[index] = true;
                                               }
                                             },
                                       child: Text(
-                                        nums[index].toString(),
+                                        nums[index] ==
+                                                nums[index].roundToDouble()
+                                            ? nums[index].toInt().toString()
+                                            : nums[index].toStringAsFixed(2),
                                         style: const TextStyle(
                                           fontSize: 20,
                                           color: Colors.white,
@@ -255,13 +292,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: turn > 0 || expectNum
                           ? null
                           : () {
-                              if (!expectNum && turn < 1) {
-                                setState(() {
-                                  operationUsed = '+';
-                                });
-                                expectNum = true;
-                                turn++;
-                              }
+                              setState(() {
+                                operationUsed = '+';
+                              });
+                              expectNum = true;
+                              turn++;
                             },
                       child: Text('+',
                           style: TextStyle(
@@ -270,7 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              Padding(padding: EdgeInsets.only(right: 15.0)),
+              Padding(padding: EdgeInsets.only(right: 30.0)),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -278,13 +313,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: turn > 0 || expectNum
                           ? null
                           : () {
-                              if (!expectNum && turn < 1) {
-                                setState(() {
-                                  operationUsed = '-';
-                                });
-                                expectNum = true;
-                                turn++;
-                              }
+                              setState(() {
+                                operationUsed = '-';
+                              });
+                              expectNum = true;
+                              turn++;
                             },
                       child: Text('-',
                           style: TextStyle(
@@ -293,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              Padding(padding: EdgeInsets.only(right: 15.0)),
+              Padding(padding: EdgeInsets.only(right: 30.0)),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -301,13 +334,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: turn > 0 || expectNum
                           ? null
                           : () {
-                              if (!expectNum && turn < 1) {
-                                setState(() {
-                                  operationUsed = '×';
-                                });
-                                expectNum = true;
-                                turn++;
-                              }
+                              setState(() {
+                                operationUsed = '×';
+                              });
+                              expectNum = true;
+                              turn++;
                             },
                       child: Text('×',
                           style: TextStyle(
@@ -316,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              Padding(padding: EdgeInsets.only(right: 15.0)),
+              Padding(padding: EdgeInsets.only(right: 35.0)),
               ButtonTheme(
                   minWidth: 50.0,
                   height: 50.0,
@@ -324,13 +355,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: turn > 0 || expectNum
                           ? null
                           : () {
-                              if (!expectNum && turn < 1) {
-                                setState(() {
-                                  operationUsed = '÷';
-                                });
-                                expectNum = true;
-                                turn++;
-                              }
+                              setState(() {
+                                operationUsed = '÷';
+                              });
+                              expectNum = true;
+                              turn++;
                             },
                       child: Text('÷',
                           style: TextStyle(
@@ -339,29 +368,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: turn > 0 || expectNum
                                   ? Colors.grey
                                   : Colors.black)))),
-              Padding(padding: EdgeInsets.only(right: 15.0)),
-              ButtonTheme(
-                  minWidth: 50.0,
-                  height: 50.0,
-                  child: OutlinedButton(
-                      onPressed: turn > 0 || expectNum
-                          ? null
-                          : () {
-                              if (!expectNum && turn < 1) {
-                                setState(() {
-                                  operationUsed = '%';
-                                });
-                                expectNum = true;
-                                turn++;
-                              }
-                            },
-                      child: Text('%',
-                          style: TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: turn > 0 || expectNum
-                                  ? Colors.grey
-                                  : Colors.black))))
             ]),
             Padding(padding: EdgeInsets.only(bottom: 50.0)),
             // RESULT TEXT
@@ -375,7 +381,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                                 numCurrentlyUsedIndexes[0] == -1
                                     ? "_"
-                                    : nums[numCurrentlyUsedIndexes[0]].toString(),
+                                    : nums[numCurrentlyUsedIndexes[0]] ==
+                                            nums[numCurrentlyUsedIndexes[0]]
+                                                .roundToDouble()
+                                        ? nums[numCurrentlyUsedIndexes[0]]
+                                            .toInt()
+                                            .toString()
+                                        : nums[numCurrentlyUsedIndexes[0]]
+                                            .toStringAsFixed(2),
                                 style: TextStyle(fontSize: 26))),
                         Padding(
                             padding: EdgeInsets.only(
@@ -387,7 +400,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text(
                                 numCurrentlyUsedIndexes[1] == -1
                                     ? "_"
-                                    : nums[numCurrentlyUsedIndexes[1]].toString(),
+                                    : nums[numCurrentlyUsedIndexes[1]] ==
+                                            nums[numCurrentlyUsedIndexes[1]]
+                                                .roundToDouble()
+                                        ? nums[numCurrentlyUsedIndexes[1]]
+                                            .toInt()
+                                            .toString()
+                                        : nums[numCurrentlyUsedIndexes[1]]
+                                            .toStringAsFixed(2),
                                 style: TextStyle(fontSize: 26)))
                       ]),
             ButtonTheme(
@@ -402,26 +422,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     : () {
                         bool divisionError = false;
                         if (operationUsed == '+') {
-                          finalResult =
-                              nums[numCurrentlyUsedIndexes[0]] + nums[numCurrentlyUsedIndexes[1]];
+                          finalResult = nums[numCurrentlyUsedIndexes[0]] +
+                              nums[numCurrentlyUsedIndexes[1]].toDouble();
                         } else if (operationUsed == '-') {
-                          finalResult =
-                              nums[numCurrentlyUsedIndexes[0]] - nums[numCurrentlyUsedIndexes[1]];
+                          finalResult = nums[numCurrentlyUsedIndexes[0]] -
+                              nums[numCurrentlyUsedIndexes[1]].toDouble();
                         } else if (operationUsed == '×') {
-                          finalResult =
-                              nums[numCurrentlyUsedIndexes[0]] * nums[numCurrentlyUsedIndexes[1]];
+                          finalResult = nums[numCurrentlyUsedIndexes[0]] *
+                              nums[numCurrentlyUsedIndexes[1]].toDouble();
                         } else if (operationUsed == '÷') {
                           if (nums[numCurrentlyUsedIndexes[1]] != 0) {
                             finalResult = (nums[numCurrentlyUsedIndexes[0]] /
-                                    nums[numCurrentlyUsedIndexes[1]])
-                                .truncate();
+                                nums[numCurrentlyUsedIndexes[1]]);
                           } else {
                             _showDivisionErrorMsg();
                             divisionError = true;
                           }
-                        } else if (operationUsed == '%') {
-                          finalResult =
-                              nums[numCurrentlyUsedIndexes[0]] % nums[numCurrentlyUsedIndexes[1]];
                         }
 
                         if (!divisionError) {
@@ -440,7 +456,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             operationUsed = '_';
 
                             int numDiceLeft = 4;
-                            for (int die in nums) {
+                            for (double die in nums) {
                               if (die == -1) {
                                 --numDiceLeft;
                               }
