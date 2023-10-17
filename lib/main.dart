@@ -7,11 +7,13 @@ var rng = new Random();
 List<List<int>> allSolvableProblems = getProblems();
 int randomProblemIndex = rng.nextInt(allSolvableProblems.length);
 Set<int> problemIndexSeen = {randomProblemIndex};
+List<int> shuffledProblem =
+    shuffleList(allSolvableProblems[randomProblemIndex]);
 
-int firstNum = allSolvableProblems[randomProblemIndex][0];
-int secondNum = allSolvableProblems[randomProblemIndex][1];
-int thirdNum = allSolvableProblems[randomProblemIndex][2];
-int fourthNum = allSolvableProblems[randomProblemIndex][3];
+int firstNum = shuffledProblem[0];
+int secondNum = shuffledProblem[1];
+int thirdNum = shuffledProblem[2];
+int fourthNum = shuffledProblem[3];
 
 List<double> nums = [
   firstNum.toDouble(),
@@ -42,6 +44,16 @@ int randomColorIndex = rng.nextInt(6);
 DateTime startTime = DateTime.now();
 int timePassedSeconds = 0;
 int timePassedMinutes = 0;
+
+List<int> shuffleList<T>(List<int> list) {
+  for (var i = list.length - 1; i > 0; i--) {
+    final j = rng.nextInt(i + 1);
+    final temp = list[i];
+    list[i] = list[j];
+    list[j] = temp;
+  }
+  return list;
+}
 
 void main() {
   startTime = DateTime.now();
@@ -95,18 +107,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _nextGameSetState() {
     setState(() {
-      int newRandomProblemIndex = rng.nextInt(allSolvableProblems.length);
+      randomProblemIndex = rng.nextInt(allSolvableProblems.length);
       // make sure new problem is not seen before
-      while (problemIndexSeen.contains(newRandomProblemIndex)) {
-        newRandomProblemIndex = rng.nextInt(allSolvableProblems.length);
+      while (problemIndexSeen.contains(randomProblemIndex)) {
+        randomProblemIndex = rng.nextInt(allSolvableProblems.length);
       }
-      randomProblemIndex = newRandomProblemIndex;
-      problemIndexSeen.add(newRandomProblemIndex);
+      problemIndexSeen.add(randomProblemIndex);
+      shuffledProblem = shuffleList(allSolvableProblems[randomProblemIndex]);
 
-      firstNum = allSolvableProblems[randomProblemIndex][0];
-      secondNum = allSolvableProblems[randomProblemIndex][1];
-      thirdNum = allSolvableProblems[randomProblemIndex][2];
-      fourthNum = allSolvableProblems[randomProblemIndex][3];
+      firstNum = shuffledProblem[0];
+      secondNum = shuffledProblem[1];
+      thirdNum = shuffledProblem[2];
+      fourthNum = shuffledProblem[3];
 
       nums = [
         firstNum.toDouble(),
