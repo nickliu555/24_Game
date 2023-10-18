@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projects/rules.dart';
 import 'game.dart';
 import 'difficulty.dart';
 
@@ -58,12 +59,12 @@ class _MyMenuPageState extends State<MyMenuPage> {
                 height: 50.0,
                 child: Center(
                   child: ElevatedButton(
-                    child: const Text('Difficulty'),
+                    child: const Text('How to Play'),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DifficultyPage()),
+                            builder: (context) => RulesPage()),
                       );
                     },
                   ),
@@ -73,8 +74,14 @@ class _MyMenuPageState extends State<MyMenuPage> {
                 height: 50.0,
                 child: Center(
                   child: ElevatedButton(
-                    child: const Text('Rules'),
-                    onPressed: () {},
+                    child: const Text('Difficulty'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DifficultyPage()),
+                      );
+                    },
                   ),
                 )),
             ButtonTheme(
