@@ -52,7 +52,7 @@ class _MyRulesPageState extends State<RulesPage> {
                                 ]),
                           ),
                           onTap: () =>
-                              launchUrl(Uri.parse('https://www.youtube.com/')))
+                              launchUrl(Uri.parse('https://www.youtube.com/watch?v=LR6O3QdUWtk')))
                     ]))));
   }
 }

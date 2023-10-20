@@ -51,19 +51,6 @@ List<int> shuffleList<T>(List<int> list) {
   return list;
 }
 
-// class GamePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     // startTime = DateTime.now();
-//     return MaterialApp(
-//       title: 'Game Page',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: MyGamePage(),
-//     );
-//   }
-// }
 
 class GamePage extends StatefulWidget {
   GamePage({Key? key}) : super(key: key);
@@ -75,7 +62,6 @@ class GamePage extends StatefulWidget {
 class _MyGamePageState extends State<GamePage> {
   _MyGamePageState() {
     startTime = DateTime.now();
-    print("start = " + startTime.toString());
     newGame(true);
   }
 
@@ -152,12 +138,10 @@ class _MyGamePageState extends State<GamePage> {
   }
 
   void _showResultDialog() {
-    // flutter defined function
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
@@ -206,11 +190,9 @@ class _MyGamePageState extends State<GamePage> {
   }
 
   void _showDivisionErrorMsg() {
-    // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           backgroundColor: Colors.red,
           content: const Text('Sorry you cannot divide by zero',
