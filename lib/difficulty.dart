@@ -34,70 +34,91 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
           children: <Widget>[
             Container(
                 width: 200.0,
-                child: ListTile(
-                  title: const Text('Easy'),
-                  textColor: Colors.white,
+                child: RadioListTile<difficultyLevel>(
+                  title: Text(
+                    'Easy',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: currDifficultyLevel == difficultyLevel.Easy
+                            ? FontWeight.bold
+                            : FontWeight.normal),
+                  ),
+                  value: difficultyLevel.Easy,
+                  groupValue: currDifficultyLevel,
+                  activeColor: Colors.white,
                   tileColor: Colors.green,
-                  leading: Radio<difficultyLevel>(
-                    value: difficultyLevel.Easy,
-                    groupValue: currDifficultyLevel,
-                    onChanged: (difficultyLevel? value) {
-                      setState(() {
-                        currDifficultyLevel = value;
-                      });
-                    },
-                  ),
+                  onChanged: (difficultyLevel? value) {
+                    setState(() {
+                      currDifficultyLevel = value;
+                    });
+                  },
                 )),
             Padding(padding: EdgeInsets.only(bottom: 10.0)),
             Container(
                 width: 200.0,
-                child: ListTile(
-                  title: const Text('Medium'),
-                  textColor: Colors.white,
+                child: RadioListTile<difficultyLevel>(
+                  title: Text(
+                    'Medium',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight:
+                            currDifficultyLevel == difficultyLevel.Medium
+                                ? FontWeight.bold
+                                : FontWeight.normal),
+                  ),
+                  value: difficultyLevel.Medium,
+                  groupValue: currDifficultyLevel,
+                  activeColor: Colors.white,
                   tileColor: Colors.orange,
-                  leading: Radio<difficultyLevel>(
-                    value: difficultyLevel.Medium,
-                    groupValue: currDifficultyLevel,
-                    onChanged: (difficultyLevel? value) {
-                      setState(() {
-                        currDifficultyLevel = value;
-                      });
-                    },
-                  ),
+                  onChanged: (difficultyLevel? value) {
+                    setState(() {
+                      currDifficultyLevel = value;
+                    });
+                  },
                 )),
             Padding(padding: EdgeInsets.only(bottom: 10.0)),
             Container(
                 width: 200.0,
-                child: ListTile(
-                  title: const Text('Hard'),
-                  textColor: Colors.white,
+                child: RadioListTile<difficultyLevel>(
+                  title: Text(
+                    'Hard',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: currDifficultyLevel == difficultyLevel.Hard
+                            ? FontWeight.bold
+                            : FontWeight.normal),
+                  ),
+                  value: difficultyLevel.Hard,
+                  groupValue: currDifficultyLevel,
+                  activeColor: Colors.white,
                   tileColor: Colors.red,
-                  leading: Radio<difficultyLevel>(
-                    value: difficultyLevel.Hard,
-                    groupValue: currDifficultyLevel,
-                    onChanged: (difficultyLevel? value) {
-                      setState(() {
-                        currDifficultyLevel = value;
-                      });
-                    },
-                  ),
+                  onChanged: (difficultyLevel? value) {
+                    setState(() {
+                      currDifficultyLevel = value;
+                    });
+                  },
                 )),
             Padding(padding: EdgeInsets.only(bottom: 10.0)),
             Container(
                 width: 200.0,
-                child: ListTile(
-                  title: const Text('Mixed'),
-                  textColor: Colors.white,
-                  tileColor: Colors.purple,
-                  leading: Radio<difficultyLevel>(
-                    value: difficultyLevel.Mixed,
-                    groupValue: currDifficultyLevel,
-                    onChanged: (difficultyLevel? value) {
-                      setState(() {
-                        currDifficultyLevel = value;
-                      });
-                    },
+                child: RadioListTile<difficultyLevel>(
+                  title: Text(
+                    'Mixed',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: currDifficultyLevel == difficultyLevel.Mixed
+                            ? FontWeight.bold
+                            : FontWeight.normal),
                   ),
+                  value: difficultyLevel.Mixed,
+                  groupValue: currDifficultyLevel,
+                  activeColor: Colors.white,
+                  tileColor: Colors.purple,
+                  onChanged: (difficultyLevel? value) {
+                    setState(() {
+                      currDifficultyLevel = value;
+                    });
+                  },
                 )),
           ],
         ),
