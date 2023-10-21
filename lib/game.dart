@@ -51,7 +51,6 @@ List<int> shuffleList<T>(List<int> list) {
   return list;
 }
 
-
 class GamePage extends StatefulWidget {
   GamePage({Key? key}) : super(key: key);
 
@@ -149,7 +148,7 @@ class _MyGamePageState extends State<GamePage> {
           backgroundColor: finalResult == 24 ? Colors.green : Colors.red,
           content: finalResult == 24
               ? Text(
-                  'Congrats! You got 24!\nYour time was ' +
+                  '🎉👏\nCongrats! You got 24.\nYour time was ' +
                       timePassedMinutes.toString().padLeft(2, "0") +
                       ":" +
                       timePassedSeconds.toString().padLeft(2, "0"),
@@ -157,13 +156,13 @@ class _MyGamePageState extends State<GamePage> {
                   textAlign: TextAlign.center)
               : finalResult == finalResult.roundToDouble()
                   ? Text(
-                      'Sorry, you did not get 24.\nYou got ' +
-                          finalResult.toInt().toString(),
+                      '😔\nSorry, you did not get 24.\nYou got ' +
+                          finalResult.toInt().toString() + "\nPlease try again",
                       style: TextStyle(color: Colors.white, fontSize: 30),
                       textAlign: TextAlign.center)
                   : Text(
-                      'Sorry, you did not get 24.\nYou got ' +
-                          finalResult.toStringAsFixed(2),
+                      '😔\nSorry, you did not get 24.\nYou got ' +
+                          finalResult.toStringAsFixed(2) + "\nPlease try again",
                       style: TextStyle(color: Colors.white, fontSize: 30),
                       textAlign: TextAlign.center),
           actions: <Widget>[
@@ -195,6 +194,9 @@ class _MyGamePageState extends State<GamePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.red,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
           content: const Text('Sorry you cannot divide by zero',
               style: TextStyle(color: Colors.white, fontSize: 30),
               textAlign: TextAlign.center),
@@ -256,22 +258,22 @@ class _MyGamePageState extends State<GamePage> {
                                     visible: nums[index] == -1 ? false : true,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          primary: Colors.black),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(32.0)),
+                                          minimumSize: Size(70, 70),
+                                          primary: difficultyToColor[
+                                              getDifficulty()]),
                                       onPressed: isNumUsedIndexes[index] ||
-                                              !expectNum ||
-                                              nums.length == 1
+                                              !expectNum
                                           ? null
                                           : () {
-                                              if (!isNumUsedIndexes[index] &&
-                                                  expectNum &&
-                                                  nums.length != 1) {
-                                                setState(() {
-                                                  currentlyUsedNumIndexes[
-                                                      turn] = index;
-                                                });
-                                                expectNum = false;
-                                                isNumUsedIndexes[index] = true;
-                                              }
+                                              setState(() {
+                                                currentlyUsedNumIndexes[turn] =
+                                                    index;
+                                              });
+                                              expectNum = false;
+                                              isNumUsedIndexes[index] = true;
                                             },
                                       child: Text(
                                         nums[index] ==
@@ -286,6 +288,7 @@ class _MyGamePageState extends State<GamePage> {
                                     ))),
                           ]);
                     })),
+            Padding(padding: EdgeInsets.only(bottom: 20.0)),
             // OPERATION BUTTONS
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               ButtonTheme(
@@ -307,7 +310,7 @@ class _MyGamePageState extends State<GamePage> {
                               fontWeight: FontWeight.bold,
                               color: turn > 0 || expectNum
                                   ? Colors.grey
-                                  : Colors.black)))),
+                                  : difficultyToColor[getDifficulty()])))),
               Padding(padding: EdgeInsets.only(right: 30.0)),
               ButtonTheme(
                   minWidth: 50.0,
@@ -328,7 +331,7 @@ class _MyGamePageState extends State<GamePage> {
                               fontWeight: FontWeight.bold,
                               color: turn > 0 || expectNum
                                   ? Colors.grey
-                                  : Colors.black)))),
+                                  : difficultyToColor[getDifficulty()])))),
               Padding(padding: EdgeInsets.only(right: 30.0)),
               ButtonTheme(
                   minWidth: 50.0,
@@ -349,7 +352,7 @@ class _MyGamePageState extends State<GamePage> {
                               fontWeight: FontWeight.bold,
                               color: turn > 0 || expectNum
                                   ? Colors.grey
-                                  : Colors.black)))),
+                                  : difficultyToColor[getDifficulty()])))),
               Padding(padding: EdgeInsets.only(right: 35.0)),
               ButtonTheme(
                   minWidth: 50.0,
@@ -370,7 +373,7 @@ class _MyGamePageState extends State<GamePage> {
                               fontWeight: FontWeight.bold,
                               color: turn > 0 || expectNum
                                   ? Colors.grey
-                                  : Colors.black)))),
+                                  : difficultyToColor[getDifficulty()])))),
             ]),
             Padding(padding: EdgeInsets.only(bottom: 50.0)),
             // RESULT TEXT

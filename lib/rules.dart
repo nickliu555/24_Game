@@ -26,16 +26,12 @@ class _MyRulesPageState extends State<RulesPage> {
                     children: <Widget>[
                       Text(
                         "Object of the game: Make the number 24 from the four numbers shown. You can add, subtract, multiply and divide. Use all four numbers on the card, but use each number only once. You do not have to use all four operations.",
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 25,
                             color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                            shadows: [
-                              Shadow(
-                                  color: Colors.brown,
-                                  offset: Offset(2, 1),
-                                  blurRadius: 10)
-                            ]),
+                            fontSize: 20.0,
+                            fontFamily: "Caveat",
+                            fontWeight: FontWeight.w400),
                       ),
                       Padding(padding: EdgeInsets.only(bottom: 50.0)),
                       InkWell(
@@ -51,8 +47,8 @@ class _MyRulesPageState extends State<RulesPage> {
                                       blurRadius: 10)
                                 ]),
                           ),
-                          onTap: () =>
-                              launchUrl(Uri.parse('https://www.youtube.com/watch?v=LR6O3QdUWtk')))
+                          onTap: () => launchUrl(Uri.parse(
+                              'https://www.youtube.com/watch?v=LR6O3QdUWtk')))
                     ]))));
   }
 }

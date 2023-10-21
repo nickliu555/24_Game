@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'game.dart';
+
 enum difficultyLevel { Easy, Medium, Hard, Mixed }
 
 difficultyLevel? currDifficultyLevel = difficultyLevel.Mixed;
@@ -21,17 +23,20 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
     return Scaffold(
       appBar: AppBar(
           title: const Center(
-              child: const Text("Difficulty Level",
+              child: const Text("Select Difficulty Level",
                   style: TextStyle(
                     color: Colors.white,
                   )))),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
                 width: 200.0,
                 child: ListTile(
                   title: const Text('Easy'),
+                  textColor: Colors.white,
                   tileColor: Colors.green,
                   leading: Radio<difficultyLevel>(
                     value: difficultyLevel.Easy,
@@ -43,58 +48,67 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
                     },
                   ),
                 )),
-        Container(
-          width: 200.0,
-          child: ListTile(
-              title: const Text('Medium'),
-              tileColor: Colors.orange,
-              leading: Radio<difficultyLevel>(
-                value: difficultyLevel.Medium,
-                groupValue: currDifficultyLevel,
-                onChanged: (difficultyLevel? value) {
-                  setState(() {
-                    currDifficultyLevel = value;
-                  });
-                },
-              ),
-            )),
-        Container(
-          width: 200.0,
-          child: ListTile(
-              title: const Text('Hard'),
-              tileColor: Colors.red,
-              leading: Radio<difficultyLevel>(
-                value: difficultyLevel.Hard,
-                groupValue: currDifficultyLevel,
-                onChanged: (difficultyLevel? value) {
-                  setState(() {
-                    currDifficultyLevel = value;
-                  });
-                },
-              ),
-            )),
-        Container(
-          width: 200.0,
-          child: ListTile(
-              title: const Text('Mixed'),
-              tileColor: Colors.purple,
-              leading: Radio<difficultyLevel>(
-                value: difficultyLevel.Mixed,
-                groupValue: currDifficultyLevel,
-                onChanged: (difficultyLevel? value) {
-                  setState(() {
-                    currDifficultyLevel = value;
-                  });
-                },
-              ),
-            )),
+            Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            Container(
+                width: 200.0,
+                child: ListTile(
+                  title: const Text('Medium'),
+                  textColor: Colors.white,
+                  tileColor: Colors.orange,
+                  leading: Radio<difficultyLevel>(
+                    value: difficultyLevel.Medium,
+                    groupValue: currDifficultyLevel,
+                    onChanged: (difficultyLevel? value) {
+                      setState(() {
+                        currDifficultyLevel = value;
+                      });
+                    },
+                  ),
+                )),
+            Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            Container(
+                width: 200.0,
+                child: ListTile(
+                  title: const Text('Hard'),
+                  textColor: Colors.white,
+                  tileColor: Colors.red,
+                  leading: Radio<difficultyLevel>(
+                    value: difficultyLevel.Hard,
+                    groupValue: currDifficultyLevel,
+                    onChanged: (difficultyLevel? value) {
+                      setState(() {
+                        currDifficultyLevel = value;
+                      });
+                    },
+                  ),
+                )),
+            Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            Container(
+                width: 200.0,
+                child: ListTile(
+                  title: const Text('Mixed'),
+                  textColor: Colors.white,
+                  tileColor: Colors.purple,
+                  leading: Radio<difficultyLevel>(
+                    value: difficultyLevel.Mixed,
+                    groupValue: currDifficultyLevel,
+                    onChanged: (difficultyLevel? value) {
+                      setState(() {
+                        currDifficultyLevel = value;
+                      });
+                    },
+                  ),
+                )),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GamePage()),
+          );
         },
         tooltip: 'Submit',
         child: const Icon(Icons.arrow_forward),

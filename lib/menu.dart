@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:projects/rules.dart';
-import 'game.dart';
 import 'difficulty.dart';
 
 enum difficultyLevel { Easy, Medium, Hard, Mixed }
@@ -33,48 +32,24 @@ class _MyMenuPageState extends State<MyMenuPage> {
     return Scaffold(
       appBar: AppBar(
           title: const Center(
-              child: const Text("Menu Page",
+              child: const Text("Menu",
                   style: TextStyle(
                     color: Colors.white,
                   )))),
       body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Image(
+                image: NetworkImage(
+                    'https://www.24game.com/skins/24game/images/24game-logo.png')),
+            Padding(padding: EdgeInsets.only(bottom: 20.0)),
             ButtonTheme(
-                minWidth: 1000.0,
+                minWidth: 50.0,
                 height: 50.0,
                 child: Center(
                   child: ElevatedButton(
-                    child: const Text('Play'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GamePage()),
-                      );
-                    },
-                  ),
-                )),
-            ButtonTheme(
-                minWidth: 1000.0,
-                height: 50.0,
-                child: Center(
-                  child: ElevatedButton(
-                    child: const Text('How to Play'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RulesPage()),
-                      );
-                    },
-                  ),
-                )),
-            ButtonTheme(
-                minWidth: 1000.0,
-                height: 50.0,
-                child: Center(
-                  child: ElevatedButton(
-                    child: const Text('Difficulty'),
+                    style: ElevatedButton.styleFrom(minimumSize: Size(150, 40)),
+                    child: const Text('▶️ Play'),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -85,11 +60,27 @@ class _MyMenuPageState extends State<MyMenuPage> {
                   ),
                 )),
             ButtonTheme(
-                minWidth: 1000.0,
+                minWidth: 50.0,
                 height: 50.0,
                 child: Center(
                   child: ElevatedButton(
-                    child: const Text('Settings'),
+                    style: ElevatedButton.styleFrom(minimumSize: Size(150, 40)),
+                    child: const Text('❔ How to Play'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RulesPage()),
+                      );
+                    },
+                  ),
+                )),
+            ButtonTheme(
+                minWidth: 50.0,
+                height: 50.0,
+                child: Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(minimumSize: Size(150, 40)),
+                    child: const Text('⚙️ Settings'),
                     onPressed: () {},
                   ),
                 ))
