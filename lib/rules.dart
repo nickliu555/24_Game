@@ -25,7 +25,7 @@ class _MyRulesPageState extends State<RulesPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "Object of the game: Make the number 24 from the four numbers shown. You can add, subtract, multiply and divide. Use all four numbers on the card, but use each number only once. You do not have to use all four operations.",
+                        "Object of the game: Make the number 24 from the four numbers shown. You can add (+), subtract (-), multiply (×) and divide (÷). You must use all four numbers exactly once. However you do not have to use all four operations.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.black,

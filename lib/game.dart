@@ -1,13 +1,17 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:projects/difficulty.dart';
+import 'package:projects/solutions.dart';
 import 'dart:math';
-import 'data.dart';
+import 'problems.dart';
 
 var rng = Random();
 
 List<List<int>> allSolvableProblems = getProblems();
+Map<String, String> problemToSolutionMap = getProblemSolutionMap();
 Set<int> problemIndexSeen = {};
 List<int> shuffledProblem = [];
+String? solution = "";
 
 int firstNum = -1;
 int secondNum = -1;
@@ -102,7 +106,16 @@ class _MyGamePageState extends State<GamePage> {
     }
 
     int randomProblemIndex = start + rng.nextInt(end - start);
-    print(randomProblemIndex);
+    print('randomProblemIndex = ' + randomProblemIndex.toString());
+
+    String problemString = "";
+    for (int num in allSolvableProblems[randomProblemIndex]) {
+      problemString += (num.toString() + " ");
+    }
+    problemString = problemString.substring(0, problemString.length - 1); // remove last space
+    solution = problemToSolutionMap[problemString];
+    print('solution = ' + solution.toString());
+
     if (firstGame) {
       problemIndexSeen = {};
     }
@@ -141,47 +154,108 @@ class _MyGamePageState extends State<GamePage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final confettiController = ConfettiController();
+        if (finalResult == 24) {
+          confettiController.play();
+        }
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              backgroundColor: finalResult == 24 ? Colors.green : Colors.red,
+              content: finalResult == 24
+                  ? Text(
+                      '🎉👏\nCongrats! You got 24\nYour time was ' +
+                          timePassedMinutes.toString().padLeft(2, "0") +
+                          ":" +
+                          timePassedSeconds.toString().padLeft(2, "0"),
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                      textAlign: TextAlign.center)
+                  : finalResult == finalResult.roundToDouble()
+                      ? Text(
+                          '😔\nSorry, you did not get 24.\nYou got ' +
+                              finalResult.toInt().toString() +
+                              "\nPlease try again",
+                          style: TextStyle(color: Colors.white, fontSize: 30),
+                          textAlign: TextAlign.center)
+                      : Text(
+                          '😔\nSorry, you did not get 24.\nYou got ' +
+                              finalResult.toStringAsFixed(2) +
+                              "\nPlease try again",
+                          style: TextStyle(color: Colors.white, fontSize: 30),
+                          textAlign: TextAlign.center),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                TextButton(
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: Colors.white, // your color here
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(50)))),
+                  child:
+                      Text("Continue", style: TextStyle(color: Colors.white)),
+                  onPressed: () {
+                    if (finalResult == 24) {
+                      setState(() {
+                        newGame(false);
+                      });
+                    } else {
+                      setState(() {
+                        resetGame();
+                      });
+                    }
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+            ConfettiWidget(
+              confettiController: confettiController,
+              shouldLoop: true,
+              blastDirectionality: BlastDirectionality.explosive,
+              emissionFrequency: 0.05,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSolutionMsg() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.blue,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
-          backgroundColor: finalResult == 24 ? Colors.green : Colors.red,
-          content: finalResult == 24
-              ? Text(
-                  '🎉👏\nCongrats! You got 24.\nYour time was ' +
-                      timePassedMinutes.toString().padLeft(2, "0") +
-                      ":" +
-                      timePassedSeconds.toString().padLeft(2, "0"),
-                  style: TextStyle(color: Colors.white, fontSize: 30),
-                  textAlign: TextAlign.center)
-              : finalResult == finalResult.roundToDouble()
-                  ? Text(
-                      '😔\nSorry, you did not get 24.\nYou got ' +
-                          finalResult.toInt().toString() + "\nPlease try again",
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      textAlign: TextAlign.center)
-                  : Text(
-                      '😔\nSorry, you did not get 24.\nYou got ' +
-                          finalResult.toStringAsFixed(2) + "\nPlease try again",
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      textAlign: TextAlign.center),
+          content: Text('Here is one possible solution to the problem:\n\n' + solution.toString(),
+              style: TextStyle(color: Colors.white, fontSize: 30),
+              textAlign: TextAlign.center),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             TextButton(
-              child: Text("Continue"),
-              onPressed: () {
-                if (finalResult == 24) {
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.white, // your color here
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(50)))),
+                child:
+                Text("Continue", style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  Navigator.of(context).pop();
                   setState(() {
                     newGame(false);
                   });
-                } else {
-                  setState(() {
-                    resetGame();
-                  });
-                }
-                Navigator.of(context).pop();
-              },
-            ),
+                }),
           ],
         );
       },
@@ -203,7 +277,15 @@ class _MyGamePageState extends State<GamePage> {
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             TextButton(
-                child: Text("Continue"),
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.white, // your color here
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(50)))),
+                child:
+                Text("Continue", style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   Navigator.of(context).pop();
                 }),
@@ -497,9 +579,7 @@ class _MyGamePageState extends State<GamePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: difficultyToColor[getDifficulty()],
         onPressed: () {
-          setState(() {
-            newGame(false);
-          });
+          _showSolutionMsg();
         },
         tooltip: 'Next Game',
         child: const Icon(Icons.arrow_forward),
