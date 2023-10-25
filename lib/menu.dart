@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:projects/rules.dart';
 import 'difficulty.dart';
 
-enum difficultyLevel { Easy, Medium, Hard, Mixed }
-
-difficultyLevel? currDifficultyLevel = difficultyLevel.Mixed;
-
 class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -31,6 +27,7 @@ class _MyMenuPageState extends State<MyMenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          backgroundColor: Colors.indigoAccent,
           title: const Center(
               child: const Text("Menu",
                   style: TextStyle(
@@ -48,7 +45,9 @@ class _MyMenuPageState extends State<MyMenuPage> {
                 height: 50.0,
                 child: Center(
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(minimumSize: Size(150, 40)),
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size(150, 40),
+                        primary: Colors.indigoAccent),
                     child: const Text('▶️ Play'),
                     onPressed: () {
                       Navigator.push(
@@ -64,7 +63,9 @@ class _MyMenuPageState extends State<MyMenuPage> {
                 height: 50.0,
                 child: Center(
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(minimumSize: Size(150, 40)),
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size(150, 40),
+                        primary: Colors.indigoAccent),
                     child: const Text('❔ How to Play'),
                     onPressed: () {
                       Navigator.push(
@@ -79,7 +80,9 @@ class _MyMenuPageState extends State<MyMenuPage> {
                 height: 50.0,
                 child: Center(
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(minimumSize: Size(150, 40)),
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size(150, 40),
+                        primary: Colors.indigoAccent),
                     child: const Text('⚙️ Settings'),
                     onPressed: () {},
                   ),

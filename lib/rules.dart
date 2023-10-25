@@ -13,18 +13,25 @@ class _MyRulesPageState extends State<RulesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: const Center(
-                child: const Text("How to Play",
+            backgroundColor: Colors.indigoAccent,
+            centerTitle: true,
+            title: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text("How to Play",
                     style: TextStyle(
                       color: Colors.white,
-                    )))),
+                    ))
+              ],
+            )),
         body: Center(
-            child: Container(
+            child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
+                      const Text(
                         "Object of the game: Make the number 24 from the four numbers shown. You can add (+), subtract (-), multiply (×) and divide (÷). You must use all four numbers exactly once. However you do not have to use all four operations.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -33,9 +40,9 @@ class _MyRulesPageState extends State<RulesPage> {
                             fontFamily: "Caveat",
                             fontWeight: FontWeight.w400),
                       ),
-                      Padding(padding: EdgeInsets.only(bottom: 50.0)),
+                      const Padding(padding: EdgeInsets.only(bottom: 50.0)),
                       InkWell(
-                          child: Text(
+                          child: const Text(
                             "Video",
                             style: TextStyle(
                                 fontSize: 25,

@@ -22,17 +22,24 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Center(
-              child: const Text("Select Difficulty Level",
+          backgroundColor: Colors.indigoAccent,
+          centerTitle: true,
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text("Select Difficulty Level",
                   style: TextStyle(
                     color: Colors.white,
-                  )))),
+                  ))
+            ],
+          )),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Container(
+            SizedBox(
                 width: 200.0,
                 child: RadioListTile<difficultyLevel>(
                   title: Text(
@@ -53,8 +60,8 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
                     });
                   },
                 )),
-            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-            Container(
+            const Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            SizedBox(
                 width: 200.0,
                 child: RadioListTile<difficultyLevel>(
                   title: Text(
@@ -76,8 +83,8 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
                     });
                   },
                 )),
-            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-            Container(
+            const Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            SizedBox(
                 width: 200.0,
                 child: RadioListTile<difficultyLevel>(
                   title: Text(
@@ -98,8 +105,8 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
                     });
                   },
                 )),
-            Padding(padding: EdgeInsets.only(bottom: 10.0)),
-            Container(
+            const Padding(padding: EdgeInsets.only(bottom: 10.0)),
+            SizedBox(
                 width: 200.0,
                 child: RadioListTile<difficultyLevel>(
                   title: Text(
@@ -124,7 +131,7 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.indigoAccent,
         onPressed: () {
           Navigator.push(
             context,

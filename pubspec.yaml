@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   url_launcher: ^6.1.14
   confetti: ^0.6.0
+  fraction: ^5.0.2
 
 dev_dependencies:
   flutter_test:
