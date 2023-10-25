@@ -366,58 +366,6 @@ class _MyGamePageState extends State<GamePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // NUM BUTTONS
-              // Container(
-              //     height: 100,
-              //     child: GridView.builder(
-              //         itemCount: nums.length,
-              //         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              //           crossAxisCount: nums.length,
-              //         ),
-              //         itemBuilder: (BuildContext context, int index) {
-              //           return Row(
-              //               mainAxisAlignment: MainAxisAlignment.center,
-              //               children: <Widget>[
-              //                 ButtonTheme(
-              //                     minWidth: 50.0,
-              //                     height: 50.0,
-              //                     child: Visibility(
-              //                         visible: nums[index] == -1 ? false : true,
-              //                         child: ElevatedButton(
-              //                           style: ElevatedButton.styleFrom(
-              //                               shape: RoundedRectangleBorder(
-              //                                   borderRadius:
-              //                                       BorderRadius.circular(32.0)),
-              //                               minimumSize: Size(70, 70),
-              //                               primary: difficultyToColor[
-              //                                   getDifficulty()]),
-              //                           onPressed: isNumUsedIndexes[index] ||
-              //                                   !expectNum
-              //                               ? null
-              //                               : () {
-              //                                   setState(() {
-              //                                     currentlyUsedNumIndexes[turn] =
-              //                                         index;
-              //                                   });
-              //                                   expectNum = false;
-              //                                   isNumUsedIndexes[index] = true;
-              //
-              //                                   if(readyToCreateNewNumber()) {
-              //                                     handleCreateNewNum();
-              //                                   }
-              //                                 },
-              //                           child: Text(
-              //                             nums[index] ==
-              //                                     nums[index].roundToDouble()
-              //                                 ? nums[index].toInt().toString()
-              //                                 : nums[index].toStringAsFixed(3),
-              //                             style: const TextStyle(
-              //                               fontSize: 20,
-              //                               color: Colors.white,
-              //                             ),
-              //                           ),
-              //                         ))),
-              //               ]);
-              //         })),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -681,14 +629,6 @@ class _MyGamePageState extends State<GamePage> {
             ],
           ),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   backgroundColor: difficultyToColor[getDifficulty()],
-        //   onPressed: () {
-        //     _showSolutionMsg();
-        //   },
-        //   tooltip: 'Next Game',
-        //   child: const Icon(Icons.arrow_forward),
-        // ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(20.0),
