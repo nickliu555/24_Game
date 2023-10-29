@@ -85,8 +85,8 @@ class _MyGamePageState extends State<GamePage> {
           nums[currentStepUsedNumIndex[1]].toDouble();
     } else if (operationUsed == '÷') {
       if (nums[currentStepUsedNumIndex[1]] != 0) {
-        finalResult =
-            (nums[currentStepUsedNumIndex[0]] / nums[currentStepUsedNumIndex[1]]);
+        finalResult = (nums[currentStepUsedNumIndex[0]] /
+            nums[currentStepUsedNumIndex[1]]);
       } else {
         _showDivisionErrorMsg();
         return;
@@ -103,7 +103,7 @@ class _MyGamePageState extends State<GamePage> {
       operationUsed = '_';
 
       int numLeftToUse = 4;
-      for (int i=0; i<4; ++i) {
+      for (int i = 0; i < 4; ++i) {
         if (!isIndexVisible[i]) {
           --numLeftToUse;
         }
@@ -273,6 +273,7 @@ class _MyGamePageState extends State<GamePage> {
 
   void _showSolutionMsg() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
