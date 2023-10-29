@@ -26,8 +26,8 @@ List<double> nums = [
   fourthNum.toDouble()
 ];
 
-List<bool> isNumUsedIndexes = [false, false, false, false];
-List<int> currentlyUsedNumIndexes = [-1, -1];
+List<bool> isIndexVisible = [true, true, true, true];
+List<int> currentStepUsedNumIndex = [-1, -1];
 String operationUsed = '_';
 
 bool expectNum = true;
@@ -70,23 +70,23 @@ class _MyGamePageState extends State<GamePage> {
   }
 
   bool readyToCreateNewNumber() {
-    return turn >= 1 && currentlyUsedNumIndexes[1] != -1;
+    return turn >= 1 && currentStepUsedNumIndex[1] != -1;
   }
 
   void handleCreateNewNum() {
     if (operationUsed == '+') {
-      finalResult = nums[currentlyUsedNumIndexes[0]] +
-          nums[currentlyUsedNumIndexes[1]].toDouble();
+      finalResult = nums[currentStepUsedNumIndex[0]] +
+          nums[currentStepUsedNumIndex[1]].toDouble();
     } else if (operationUsed == '-') {
-      finalResult = nums[currentlyUsedNumIndexes[0]] -
-          nums[currentlyUsedNumIndexes[1]].toDouble();
+      finalResult = nums[currentStepUsedNumIndex[0]] -
+          nums[currentStepUsedNumIndex[1]].toDouble();
     } else if (operationUsed == '×') {
-      finalResult = nums[currentlyUsedNumIndexes[0]] *
-          nums[currentlyUsedNumIndexes[1]].toDouble();
+      finalResult = nums[currentStepUsedNumIndex[0]] *
+          nums[currentStepUsedNumIndex[1]].toDouble();
     } else if (operationUsed == '÷') {
-      if (nums[currentlyUsedNumIndexes[1]] != 0) {
-        finalResult = (nums[currentlyUsedNumIndexes[0]] /
-            nums[currentlyUsedNumIndexes[1]]);
+      if (nums[currentStepUsedNumIndex[1]] != 0) {
+        finalResult =
+            (nums[currentStepUsedNumIndex[0]] / nums[currentStepUsedNumIndex[1]]);
       } else {
         _showDivisionErrorMsg();
         return;
@@ -94,19 +94,17 @@ class _MyGamePageState extends State<GamePage> {
     }
 
     setState(() {
-      nums[currentlyUsedNumIndexes[0]] = finalResult;
-      nums[currentlyUsedNumIndexes[1]] = -1;
-
-      isNumUsedIndexes = [false, false, false, false];
+      nums[currentStepUsedNumIndex[0]] = finalResult;
+      isIndexVisible[currentStepUsedNumIndex[1]] = false;
 
       expectNum = true;
       turn = 0;
-      currentlyUsedNumIndexes = [-1, -1];
+      currentStepUsedNumIndex = [-1, -1];
       operationUsed = '_';
 
       int numLeftToUse = 4;
-      for (double num in nums) {
-        if (num == -1) {
+      for (int i=0; i<4; ++i) {
+        if (!isIndexVisible[i]) {
           --numLeftToUse;
         }
       }
@@ -130,9 +128,9 @@ class _MyGamePageState extends State<GamePage> {
       thirdNum.toDouble(),
       fourthNum.toDouble()
     ];
-    currentlyUsedNumIndexes = [-1, -1];
-    isNumUsedIndexes = [false, false, false, false];
 
+    isIndexVisible = [true, true, true, true];
+    currentStepUsedNumIndex = [-1, -1];
     operationUsed = '_';
 
     expectNum = true;
@@ -158,7 +156,8 @@ class _MyGamePageState extends State<GamePage> {
 
     int randomProblemIndex = start + rng.nextInt(end - start);
 
-    if (firstGame) {
+    // if its first game or we have already completed all problems
+    if (firstGame || problemIndexSeen.length == (end - start + 1)) {
       problemIndexSeen = {};
     }
     // make sure new problem is not seen before
@@ -172,8 +171,9 @@ class _MyGamePageState extends State<GamePage> {
     for (int num in allSolvableProblems[randomProblemIndex]) {
       problemString += (num.toString() + " ");
     }
-    problemString = problemString.substring(0, problemString.length - 1);
-    print('problemString = ' + problemString); // remove last space
+    problemString = problemString.substring(
+        0, problemString.length - 1); // remove last space
+    print('problemString = ' + problemString);
     solution = problemToSolutionMap[problemString];
     print('solution = ' + solution.toString());
     shuffledProblem = shuffleList(allSolvableProblems[randomProblemIndex]);
@@ -189,9 +189,9 @@ class _MyGamePageState extends State<GamePage> {
       thirdNum.toDouble(),
       fourthNum.toDouble()
     ];
-    isNumUsedIndexes = [false, false, false, false];
-    currentlyUsedNumIndexes = [-1, -1];
 
+    isIndexVisible = [true, true, true, true];
+    currentStepUsedNumIndex = [-1, -1];
     operationUsed = '_';
 
     expectNum = true;
@@ -370,7 +370,7 @@ class _MyGamePageState extends State<GamePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Visibility(
-                        visible: nums[0] == -1 ? false : true,
+                        visible: isIndexVisible[0],
                         maintainSize: true,
                         maintainAnimation: true,
                         maintainState: true,
@@ -380,14 +380,15 @@ class _MyGamePageState extends State<GamePage> {
                                   borderRadius: BorderRadius.circular(32.0)),
                               minimumSize: const Size(100, 80),
                               primary: difficultyToColor[getDifficulty()]),
-                          onPressed: isNumUsedIndexes[0] || !expectNum
+                          onPressed: currentStepUsedNumIndex[0] == 0 ||
+                                  currentStepUsedNumIndex[1] == 0 ||
+                                  !expectNum
                               ? null
                               : () {
                                   setState(() {
-                                    currentlyUsedNumIndexes[turn] = 0;
+                                    currentStepUsedNumIndex[turn] = 0;
+                                    expectNum = false;
                                   });
-                                  expectNum = false;
-                                  isNumUsedIndexes[0] = true;
 
                                   if (readyToCreateNewNumber()) {
                                     handleCreateNewNum();
@@ -403,7 +404,7 @@ class _MyGamePageState extends State<GamePage> {
                         )),
                     const Padding(padding: EdgeInsets.only(right: 30.0)),
                     Visibility(
-                        visible: nums[1] == -1 ? false : true,
+                        visible: isIndexVisible[1],
                         maintainSize: true,
                         maintainAnimation: true,
                         maintainState: true,
@@ -413,14 +414,15 @@ class _MyGamePageState extends State<GamePage> {
                                   borderRadius: BorderRadius.circular(32.0)),
                               minimumSize: const Size(100, 80),
                               primary: difficultyToColor[getDifficulty()]),
-                          onPressed: isNumUsedIndexes[1] || !expectNum
+                          onPressed: currentStepUsedNumIndex[0] == 1 ||
+                                  currentStepUsedNumIndex[1] == 1 ||
+                                  !expectNum
                               ? null
                               : () {
                                   setState(() {
-                                    currentlyUsedNumIndexes[turn] = 1;
+                                    currentStepUsedNumIndex[turn] = 1;
+                                    expectNum = false;
                                   });
-                                  expectNum = false;
-                                  isNumUsedIndexes[1] = true;
 
                                   if (readyToCreateNewNumber()) {
                                     handleCreateNewNum();
@@ -440,7 +442,7 @@ class _MyGamePageState extends State<GamePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Visibility(
-                        visible: nums[2] == -1 ? false : true,
+                        visible: isIndexVisible[2],
                         maintainSize: true,
                         maintainAnimation: true,
                         maintainState: true,
@@ -450,14 +452,15 @@ class _MyGamePageState extends State<GamePage> {
                                   borderRadius: BorderRadius.circular(32.0)),
                               minimumSize: const Size(100, 80),
                               primary: difficultyToColor[getDifficulty()]),
-                          onPressed: isNumUsedIndexes[2] || !expectNum
+                          onPressed: currentStepUsedNumIndex[0] == 2 ||
+                                  currentStepUsedNumIndex[1] == 2 ||
+                                  !expectNum
                               ? null
                               : () {
                                   setState(() {
-                                    currentlyUsedNumIndexes[turn] = 2;
+                                    currentStepUsedNumIndex[turn] = 2;
+                                    expectNum = false;
                                   });
-                                  expectNum = false;
-                                  isNumUsedIndexes[2] = true;
 
                                   if (readyToCreateNewNumber()) {
                                     handleCreateNewNum();
@@ -473,7 +476,7 @@ class _MyGamePageState extends State<GamePage> {
                         )),
                     const Padding(padding: EdgeInsets.only(right: 30.0)),
                     Visibility(
-                        visible: nums[3] == -1 ? false : true,
+                        visible: isIndexVisible[3],
                         maintainSize: true,
                         maintainAnimation: true,
                         maintainState: true,
@@ -483,14 +486,15 @@ class _MyGamePageState extends State<GamePage> {
                                   borderRadius: BorderRadius.circular(32.0)),
                               minimumSize: const Size(100, 80),
                               primary: difficultyToColor[getDifficulty()]),
-                          onPressed: isNumUsedIndexes[3] || !expectNum
+                          onPressed: currentStepUsedNumIndex[0] == 3 ||
+                                  currentStepUsedNumIndex[1] == 3 ||
+                                  !expectNum
                               ? null
                               : () {
                                   setState(() {
-                                    currentlyUsedNumIndexes[turn] = 3;
+                                    currentStepUsedNumIndex[turn] = 3;
+                                    expectNum = false;
                                   });
-                                  expectNum = false;
-                                  isNumUsedIndexes[3] = true;
 
                                   if (readyToCreateNewNumber()) {
                                     handleCreateNewNum();
@@ -604,10 +608,10 @@ class _MyGamePageState extends State<GamePage> {
                         padding:
                             const EdgeInsets.only(right: 10.0, bottom: 30.0),
                         child: Text(
-                            currentlyUsedNumIndexes[0] == -1
+                            currentStepUsedNumIndex[0] == -1
                                 ? "_"
                                 : Fraction.fromDouble(
-                                        nums[currentlyUsedNumIndexes[0]])
+                                        nums[currentStepUsedNumIndex[0]])
                                     .toString(),
                             style: const TextStyle(fontSize: 26))),
                     Padding(
@@ -619,10 +623,10 @@ class _MyGamePageState extends State<GamePage> {
                         padding:
                             const EdgeInsets.only(left: 10.0, bottom: 30.0),
                         child: Text(
-                            currentlyUsedNumIndexes[1] == -1
+                            currentStepUsedNumIndex[1] == -1
                                 ? "_"
                                 : Fraction.fromDouble(
-                                        nums[currentlyUsedNumIndexes[1]])
+                                        nums[currentStepUsedNumIndex[1]])
                                     .toString(),
                             style: const TextStyle(fontSize: 26)))
                   ]),
