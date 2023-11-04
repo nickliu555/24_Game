@@ -47,14 +47,14 @@ var difficultyToColor = {
 ClockWidget clockWidget = ClockWidget();
 
 List<int> shuffleList<T>(List<int> list) {
-  List<int> newList = list;
-  for (var i = newList.length - 1; i > 0; --i) {
+  List<int> shuffledList = List<int>.from(list);
+  for (var i = shuffledList.length - 1; i > 0; --i) {
     final j = rng.nextInt(i + 1);
-    final temp = newList[i];
-    newList[i] = newList[j];
-    newList[j] = temp;
+    final temp = shuffledList[i];
+    shuffledList[i] = shuffledList[j];
+    shuffledList[j] = temp;
   }
-  return newList;
+  return shuffledList;
 }
 
 class GamePage extends StatefulWidget {
@@ -160,6 +160,7 @@ class _MyGamePageState extends State<GamePage> {
     while (problemIndexSeen.contains(randomProblemIndex)) {
       randomProblemIndex = rng.nextInt(allSolvableProblems.length);
     }
+    randomProblemIndex = 630; // REMOVE THIS
     problemIndexSeen.add(randomProblemIndex);
     print('randomProblemIndex = ' + randomProblemIndex.toString());
 
