@@ -135,6 +135,7 @@ class _MyGamePageState extends State<GamePage> {
   }
 
   void newGame(bool firstGame) {
+    clockWidget.reset();
     int firstThirdCuttoff = (allSolvableProblems.length / 3).toInt();
     int secondThirdCutoff = firstThirdCuttoff * 2;
     var currDifficulty = getDifficulty();
@@ -194,7 +195,6 @@ class _MyGamePageState extends State<GamePage> {
     turn = 0;
 
     finalResult = 0;
-    clockWidget.reset();
   }
 
   void _showResultDialog() {
@@ -275,7 +275,7 @@ class _MyGamePageState extends State<GamePage> {
       builder: (BuildContext context) {
         clockWidget.stop();
         return AlertDialog(
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.indigoAccent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),

@@ -26,16 +26,35 @@ class _MyRulesPageState extends State<RulesPage> {
               ],
             )),
         body: Center(
-            child: SizedBox(
+            child: Container(
                 width: MediaQuery.of(context).size.width * 0.8,
+                margin: const EdgeInsets.only(top: 150.0, bottom: 150.0),
+                padding: const EdgeInsets.all(3.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Color(0xFF9FA8DA),
+                  border: Border.all(
+                    color: Colors.indigoAccent,
+                    width: 7,
+                  ),
+                ),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       const Text(
-                        "Object of the game: Make the number 24 from the four numbers shown. You can add (+), subtract (-), multiply (×) and divide (÷). You must use all four numbers exactly once. However you do not have to use all four operations.",
+                        "Object of the game:",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.indigoAccent,
+                            fontSize: 24.0,
+                            fontFamily: "Caveat",
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const Text(
+                        "Make the number 24 from the four numbers shown. You can add (+), subtract (-), multiply (×) and divide (÷). You must use all four numbers exactly once. However you do not have to use all four operations.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.indigoAccent,
                             fontSize: 20.0,
                             fontFamily: "Caveat",
                             fontWeight: FontWeight.w400),
@@ -47,6 +66,7 @@ class _MyRulesPageState extends State<RulesPage> {
                             style: TextStyle(
                                 fontSize: 25,
                                 color: Colors.blue,
+                                decoration: TextDecoration.underline,
                                 shadows: [
                                   Shadow(
                                       color: Colors.brown,
