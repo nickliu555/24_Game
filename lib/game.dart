@@ -160,7 +160,6 @@ class _MyGamePageState extends State<GamePage> {
     while (problemIndexSeen.contains(randomProblemIndex)) {
       randomProblemIndex = rng.nextInt(allSolvableProblems.length);
     }
-    randomProblemIndex = 630; // REMOVE THIS
     problemIndexSeen.add(randomProblemIndex);
     print('randomProblemIndex = ' + randomProblemIndex.toString());
 
