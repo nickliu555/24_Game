@@ -27,7 +27,7 @@ List<double> nums = [
   fourthNum.toDouble()
 ];
 
-List<bool> isNumIndexVisible = [true, true, true, true];
+List<bool> isNumIndexVisible = [false, false, false, false];
 int firstNumUsedIndex = -1;
 int secondNumUsedIndex = -1;
 String operationUsed = '_';
@@ -67,6 +67,11 @@ class GamePage extends StatefulWidget {
 class _MyGamePageState extends State<GamePage> {
   _MyGamePageState() {
     newGame(true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        isNumIndexVisible = [true, true, true, true];
+      });
+    });
   }
 
   bool readyToCreateNewNumber() {
@@ -187,6 +192,9 @@ class _MyGamePageState extends State<GamePage> {
     ];
 
     isNumIndexVisible = [true, true, true, true];
+    if (firstGame) {
+      isNumIndexVisible = [false, false, false, false];
+    }
     firstNumUsedIndex = -1;
     secondNumUsedIndex = -1;
     operationUsed = '_';
@@ -198,6 +206,11 @@ class _MyGamePageState extends State<GamePage> {
   }
 
   void _showResultDialog() {
+    if (finalResult == 24) {
+      setState(() {
+        isNumIndexVisible = [false, false, false, false];
+      });
+    }
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -269,6 +282,9 @@ class _MyGamePageState extends State<GamePage> {
   }
 
   void _showSolutionMsg() {
+    setState(() {
+      isNumIndexVisible = [false, false, false, false];
+    });
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -370,161 +386,173 @@ class _MyGamePageState extends State<GamePage> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Visibility(
-                        visible: isNumIndexVisible[0],
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32.0)),
-                              minimumSize: const Size(100, 80),
-                              primary: difficultyToColor[getDifficulty()]),
-                          onPressed: firstNumUsedIndex == 0 ||
-                                  secondNumUsedIndex == 0 ||
-                                  !expectNum
-                              ? null
-                              : () {
-                                  setState(() {
-                                    if (turn == 0) {
-                                      firstNumUsedIndex = 0;
-                                    } else {
-                                      secondNumUsedIndex = 0;
-                                    }
-                                    expectNum = false;
-                                  });
+                    IgnorePointer(
+                        ignoring: !isNumIndexVisible[0],
+                        child: AnimatedOpacity(
+                            opacity: isNumIndexVisible[0] ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 750),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shadowColor: Colors.black,
+                                  elevation: 10.0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(32.0)),
+                                  minimumSize: const Size(100, 80),
+                                  primary: difficultyToColor[getDifficulty()]),
+                              onPressed: firstNumUsedIndex == 0 ||
+                                      secondNumUsedIndex == 0 ||
+                                      !expectNum
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        if (turn == 0) {
+                                          firstNumUsedIndex = 0;
+                                        } else {
+                                          secondNumUsedIndex = 0;
+                                        }
+                                        expectNum = false;
+                                      });
 
-                                  if (readyToCreateNewNumber()) {
-                                    handleCreateNewNum();
-                                  }
-                                },
-                          child: Text(
-                            Fraction.fromDouble(nums[0]).toString(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )),
+                                      if (readyToCreateNewNumber()) {
+                                        handleCreateNewNum();
+                                      }
+                                    },
+                              child: Text(
+                                Fraction.fromDouble(nums[0]).toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ))),
                     const Padding(padding: EdgeInsets.only(right: 30.0)),
-                    Visibility(
-                        visible: isNumIndexVisible[1],
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32.0)),
-                              minimumSize: const Size(100, 80),
-                              primary: difficultyToColor[getDifficulty()]),
-                          onPressed: firstNumUsedIndex == 1 ||
-                                  secondNumUsedIndex == 1 ||
-                                  !expectNum
-                              ? null
-                              : () {
-                                  setState(() {
-                                    if (turn == 0) {
-                                      firstNumUsedIndex = 1;
-                                    } else {
-                                      secondNumUsedIndex = 1;
-                                    }
-                                    expectNum = false;
-                                  });
+                    IgnorePointer(
+                        ignoring: !isNumIndexVisible[1],
+                        child: AnimatedOpacity(
+                            opacity: isNumIndexVisible[1] ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 750),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shadowColor: Colors.black,
+                                  elevation: 10.0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(32.0)),
+                                  minimumSize: const Size(100, 80),
+                                  primary: difficultyToColor[getDifficulty()]),
+                              onPressed: firstNumUsedIndex == 1 ||
+                                      secondNumUsedIndex == 1 ||
+                                      !expectNum
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        if (turn == 0) {
+                                          firstNumUsedIndex = 1;
+                                        } else {
+                                          secondNumUsedIndex = 1;
+                                        }
+                                        expectNum = false;
+                                      });
 
-                                  if (readyToCreateNewNumber()) {
-                                    handleCreateNewNum();
-                                  }
-                                },
-                          child: Text(
-                            Fraction.fromDouble(nums[1]).toString(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )),
+                                      if (readyToCreateNewNumber()) {
+                                        handleCreateNewNum();
+                                      }
+                                    },
+                              child: Text(
+                                Fraction.fromDouble(nums[1]).toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ))),
                   ]),
               const Padding(padding: EdgeInsets.only(bottom: 30.0)),
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Visibility(
-                        visible: isNumIndexVisible[2],
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32.0)),
-                              minimumSize: const Size(100, 80),
-                              primary: difficultyToColor[getDifficulty()]),
-                          onPressed: firstNumUsedIndex == 2 ||
-                                  secondNumUsedIndex == 2 ||
-                                  !expectNum
-                              ? null
-                              : () {
-                                  setState(() {
-                                    if (turn == 0) {
-                                      firstNumUsedIndex = 2;
-                                    } else {
-                                      secondNumUsedIndex = 2;
-                                    }
-                                    expectNum = false;
-                                  });
+                    IgnorePointer(
+                        ignoring: !isNumIndexVisible[2],
+                        child: AnimatedOpacity(
+                            opacity: isNumIndexVisible[2] ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 750),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shadowColor: Colors.black,
+                                  elevation: 10.0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(32.0)),
+                                  minimumSize: const Size(100, 80),
+                                  primary: difficultyToColor[getDifficulty()]),
+                              onPressed: firstNumUsedIndex == 2 ||
+                                      secondNumUsedIndex == 2 ||
+                                      !expectNum
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        if (turn == 0) {
+                                          firstNumUsedIndex = 2;
+                                        } else {
+                                          secondNumUsedIndex = 2;
+                                        }
+                                        expectNum = false;
+                                      });
 
-                                  if (readyToCreateNewNumber()) {
-                                    handleCreateNewNum();
-                                  }
-                                },
-                          child: Text(
-                            Fraction.fromDouble(nums[2]).toString(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )),
+                                      if (readyToCreateNewNumber()) {
+                                        handleCreateNewNum();
+                                      }
+                                    },
+                              child: Text(
+                                Fraction.fromDouble(nums[2]).toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ))),
                     const Padding(padding: EdgeInsets.only(right: 30.0)),
-                    Visibility(
-                        visible: isNumIndexVisible[3],
-                        maintainSize: true,
-                        maintainAnimation: true,
-                        maintainState: true,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32.0)),
-                              minimumSize: const Size(100, 80),
-                              primary: difficultyToColor[getDifficulty()]),
-                          onPressed: firstNumUsedIndex == 3 ||
-                                  secondNumUsedIndex == 3 ||
-                                  !expectNum
-                              ? null
-                              : () {
-                                  setState(() {
-                                    if (turn == 0) {
-                                      firstNumUsedIndex = 3;
-                                    } else {
-                                      secondNumUsedIndex = 3;
-                                    }
-                                    expectNum = false;
-                                  });
+                    IgnorePointer(
+                        ignoring: !isNumIndexVisible[3],
+                        child: AnimatedOpacity(
+                            opacity: isNumIndexVisible[3] ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 750),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shadowColor: Colors.black,
+                                  elevation: 10.0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(32.0)),
+                                  minimumSize: const Size(100, 80),
+                                  primary: difficultyToColor[getDifficulty()]),
+                              onPressed: firstNumUsedIndex == 3 ||
+                                      secondNumUsedIndex == 3 ||
+                                      !expectNum
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        if (turn == 0) {
+                                          firstNumUsedIndex = 3;
+                                        } else {
+                                          secondNumUsedIndex = 3;
+                                        }
+                                        expectNum = false;
+                                      });
 
-                                  if (readyToCreateNewNumber()) {
-                                    handleCreateNewNum();
-                                  }
-                                },
-                          child: Text(
-                            Fraction.fromDouble(nums[3]).toString(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )),
+                                      if (readyToCreateNewNumber()) {
+                                        handleCreateNewNum();
+                                      }
+                                    },
+                              child: Text(
+                                Fraction.fromDouble(nums[3]).toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ))),
                   ]),
               const Padding(padding: EdgeInsets.only(bottom: 50.0)),
               // OPERATION BUTTONS

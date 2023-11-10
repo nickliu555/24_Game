@@ -21,7 +21,7 @@ class ClockWidget extends StatefulWidget {
 
   void reset() {
     stopped = false;
-    secondCount = -1;
+    secondCount = 0;
     minuteCount = 0;
   }
 
