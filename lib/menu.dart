@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:projects/rules.dart';
 import 'difficulty.dart';
 
+enum gameType { Classic, Timed }
+
+gameType? currGameType = gameType.Classic;
+
 class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -48,8 +52,28 @@ class _MyMenuPageState extends State<MyMenuPage> {
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size(150, 40),
                         primary: Colors.indigoAccent),
-                    child: const Text('▶️ Play'),
+                    child: const Text('▶️ Play Classic'),
                     onPressed: () {
+                      currGameType = gameType.Classic;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DifficultyPage()),
+                      );
+                    },
+                  ),
+                )),
+            ButtonTheme(
+                minWidth: 50.0,
+                height: 50.0,
+                child: Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size(150, 40),
+                        primary: Colors.indigoAccent),
+                    child: const Text('🕗 Play Timed'),
+                    onPressed: () {
+                      currGameType = gameType.Timed;
                       Navigator.push(
                         context,
                         MaterialPageRoute(

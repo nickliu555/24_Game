@@ -5,24 +5,20 @@ import 'package:flutter/material.dart';
 Timer timer = Timer.periodic(const Duration(seconds: 1), (timer) {});
 int secondCount = 0;
 int minuteCount = 0;
-bool stopped = false;
-int stoppedSecondCount = 0;
-int stoppedMinuteCount = 0;
+int timeIncrementInterval = 1;
 
 class ClockWidget extends StatefulWidget {
   @override
   ClockWidgetState createState() => ClockWidgetState();
 
   void stop() {
-    stopped = true;
-    stoppedSecondCount = secondCount;
-    stoppedMinuteCount = minuteCount;
+    timeIncrementInterval = 0;
   }
 
   void reset() {
-    stopped = false;
     secondCount = 0;
     minuteCount = 0;
+    timeIncrementInterval = 1;
   }
 
   int getSeconds() {
@@ -40,10 +36,11 @@ class ClockWidgetState extends State<ClockWidget> {
     super.initState();
     secondCount = 0;
     minuteCount = 0;
+    timeIncrementInterval = 1;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         setState(() {
-          ++secondCount;
+          secondCount = secondCount + timeIncrementInterval;
           if (secondCount >= 60) {
             secondCount = 0;
             ++minuteCount;
@@ -54,17 +51,11 @@ class ClockWidgetState extends State<ClockWidget> {
   }
 
   Widget build(BuildContext context) {
-    return stopped
-        ? Text(
-            stoppedMinuteCount.toString().padLeft(2, "0") +
-                ":" +
-                stoppedSecondCount.toString().padLeft(2, "0"),
-            style: const TextStyle(fontSize: 25, color: Colors.indigoAccent))
-        : Text(
-            minuteCount.toString().padLeft(2, "0") +
-                ":" +
-                secondCount.toString().padLeft(2, "0"),
-            style: const TextStyle(fontSize: 25, color: Colors.indigoAccent));
+    return Text(
+        minuteCount.toString().padLeft(2, "0") +
+            ":" +
+            secondCount.toString().padLeft(2, "0"),
+        style: const TextStyle(fontSize: 25, color: Colors.indigoAccent));
   }
 
   @override

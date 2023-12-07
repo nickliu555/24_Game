@@ -57,15 +57,15 @@ List<int> shuffleList<T>(List<int> list) {
   return shuffledList;
 }
 
-class GamePage extends StatefulWidget {
-  GamePage({Key? key}) : super(key: key);
+class ClassicGamePage extends StatefulWidget {
+  ClassicGamePage({Key? key}) : super(key: key);
 
   @override
-  _MyGamePageState createState() => _MyGamePageState();
+  _ClassicGamePageState createState() => _ClassicGamePageState();
 }
 
-class _MyGamePageState extends State<GamePage> {
-  _MyGamePageState() {
+class _ClassicGamePageState extends State<ClassicGamePage> {
+  _ClassicGamePageState() {
     newGame(true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
@@ -140,7 +140,6 @@ class _MyGamePageState extends State<GamePage> {
   }
 
   void newGame(bool firstGame) {
-    clockWidget.reset();
     int firstThirdCuttoff = (allSolvableProblems.length / 3).toInt();
     int secondThirdCutoff = firstThirdCuttoff * 2;
     var currDifficulty = getDifficulty();
@@ -257,6 +256,7 @@ class _MyGamePageState extends State<GamePage> {
                   onPressed: () {
                     if (finalResult == 24) {
                       setState(() {
+                        clockWidget.reset();
                         newGame(false);
                       });
                     } else {
@@ -315,6 +315,7 @@ class _MyGamePageState extends State<GamePage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                   setState(() {
+                    clockWidget.reset();
                     newGame(false);
                   });
                 }),
@@ -333,7 +334,7 @@ class _MyGamePageState extends State<GamePage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
-          content: const Text('Sorry you cannot divide by zero',
+          content: const Text('⚠️\nSorry you cannot divide by zero',
               style: TextStyle(color: Colors.white, fontSize: 30),
               textAlign: TextAlign.center),
           actions: <Widget>[
@@ -370,7 +371,7 @@ class _MyGamePageState extends State<GamePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text("24 Game",
+                Text("Classic Game",
                     style: TextStyle(
                       color: Colors.white,
                     ))

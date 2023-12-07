@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:projects/timed_game.dart';
 
-import 'game.dart';
+import 'classic_game.dart';
+import 'menu.dart';
 
 enum difficultyLevel { Easy, Medium, Hard, Mixed }
 
@@ -135,7 +137,10 @@ class _MyDifficultyPageState extends State<DifficultyPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => GamePage()),
+            MaterialPageRoute(
+                builder: (context) => currGameType == gameType.Classic
+                    ? ClassicGamePage()
+                    : TimedGamePage()),
           );
         },
         tooltip: 'Submit',
