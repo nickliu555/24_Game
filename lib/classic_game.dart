@@ -327,6 +327,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
 
   void _showDivisionErrorMsg() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(

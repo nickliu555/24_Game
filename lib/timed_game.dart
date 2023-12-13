@@ -397,6 +397,7 @@ class _TimedGamePageState extends State<TimedGamePage> {
 
   void _showDivisionErrorMsg() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
