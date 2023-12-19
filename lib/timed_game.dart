@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:confetti/confetti.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fraction/fraction.dart';
 import 'package:projects/difficulty.dart';
@@ -40,8 +40,8 @@ int turn = 0;
 double finalResult = 0;
 int numProblemsCompleted = 0;
 GlobalKey<TimerWidgetState> keyTimeWidget = GlobalKey();
-final GlobalKey<State> _resultDialog = GlobalKey();
-final GlobalKey<State> _divisionErrorDialog = GlobalKey();
+var divisionErrorDialog = null;
+var resultDialog = null;
 
 var difficultyToColor = {
   difficultyLevel.Easy: Colors.green,
@@ -97,7 +97,7 @@ class _TimedGamePageState extends State<TimedGamePage> {
       if (nums[secondNumUsedIndex] != 0) {
         finalResult = (nums[firstNumUsedIndex] / nums[secondNumUsedIndex]);
       } else {
-        _showDivisionErrorMsg();
+        _showDivisionErrorDialog();
         return;
       }
     }
@@ -215,222 +215,113 @@ class _TimedGamePageState extends State<TimedGamePage> {
   }
 
   void _showGameEndDialog() {
-    setState(() {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            backgroundColor: Colors.indigoAccent,
-            content: numProblemsCompleted == 1
-                ? Text('⌛\nTimes up!!\n\nYou have completed 1 problem',
-                    style: const TextStyle(color: Colors.white, fontSize: 30),
-                    textAlign: TextAlign.center)
-                : Text(
-                    '⌛\nTimes up!!\n\nYou have completed ' +
-                        numProblemsCompleted.toString() +
-                        ' problems',
-                    style: const TextStyle(color: Colors.white, fontSize: 30),
-                    textAlign: TextAlign.center),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              TextButton(
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        side: const BorderSide(
-                          color: Colors.white, // your color here
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(50)))),
-                child: const Text("Continue",
-                    style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  if (_resultDialog.currentContext != null) {
-                    Navigator.of(_resultDialog.currentContext!).pop();
-                  }
-                  if (_divisionErrorDialog.currentContext != null) {
-                    Navigator.of(_divisionErrorDialog.currentContext!).pop();
-                  }
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
+    AwesomeDialog(
+            context: context,
+            animType: AnimType.leftSlide,
+            headerAnimationLoop: false,
+            dialogType: DialogType.info,
+            showCloseIcon: false,
+            title: '⌛',
+            desc: numProblemsCompleted == 1
+                ? 'Times up!!\n\nYou have completed 1 problem'
+                : 'Times up!!\n\nYou have completed ' +
+                    numProblemsCompleted.toString() +
+                    ' problems',
+            btnOkOnPress: () {
+              if (divisionErrorDialog != null) {
+                divisionErrorDialog.dismiss();
+              }
+              if (resultDialog != null) {
+                resultDialog.dismiss();
+              }
+              Navigator.of(context).pop();
+            },
+            btnOkIcon: Icons.check_circle,
+            dismissOnTouchOutside: false)
+        .show();
   }
 
   void _showResultDialog() {
     if (finalResult == 24) {
       setState(() {
         isNumIndexVisible = [false, false, false, false];
-      });
-    }
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        final confettiController = ConfettiController();
         if (finalResult == 24) {
           ++numProblemsCompleted;
-          confettiController.play();
         }
-        return Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            AlertDialog(
-              key: _resultDialog,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              backgroundColor: finalResult == 24 ? Colors.green : Colors.red,
-              content: finalResult == 24
-                  ? Text('🎉👏\nCongrats! You got 24',
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      textAlign: TextAlign.center)
-                  : Text(
-                      '😔\nSorry, you did not get 24.\nYou got ' +
-                          Fraction.fromDouble(finalResult).toString() +
-                          "\nPlease try again",
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      textAlign: TextAlign.center),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                TextButton(
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.white, // your color here
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(50)))),
-                  child: const Text("Continue",
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () {
-                    if (finalResult == 24) {
-                      keyTimeWidget.currentState?.stopStartTime();
-                      setState(() {
-                        newGame(false);
-                      });
-                    } else {
-                      setState(() {
-                        resetGame();
-                      });
-                    }
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-            ConfettiWidget(
-              confettiController: confettiController,
-              shouldLoop: true,
-              blastDirectionality: BlastDirectionality.explosive,
-              emissionFrequency: 0.05,
-            ),
-          ],
-        );
-      },
-    );
+      });
+    }
+    resultDialog = AwesomeDialog(
+        context: context,
+        animType: AnimType.rightSlide,
+        headerAnimationLoop: false,
+        dialogType: finalResult == 24 ? DialogType.success : DialogType.error,
+        showCloseIcon: false,
+        title: finalResult == 24 ? '🎉👏' : '😔',
+        desc: finalResult == 24
+            ? 'Congrats! You got 24'
+            : 'Sorry, you did not get 24.\nYou got ' +
+                Fraction.fromDouble(finalResult).toString() +
+                '\nPlease try again',
+        btnOkOnPress: () {
+          if (finalResult == 24) {
+            keyTimeWidget.currentState?.stopStartTime();
+            setState(() {
+              newGame(false);
+            });
+          } else {
+            setState(() {
+              resetGame();
+            });
+          }
+          resultDialog = null;
+        },
+        btnOkIcon: Icons.check_circle,
+        dismissOnTouchOutside: false);
+    resultDialog.show();
   }
 
-  void _showSolutionMsg() {
+  void _showSolutionDialog() {
     setState(() {
       isNumIndexVisible = [false, false, false, false];
     });
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.indigoAccent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          content: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                    text: 'Penalty of ',
-                    style: const TextStyle(color: Colors.white, fontSize: 30)),
-                TextSpan(
-                    text: '-20s',
-                    style: const TextStyle(color: Colors.red, fontSize: 30)),
-                TextSpan(
-                    text:
-                        '\n\nHere is one possible solution to the problem:\n\n' +
-                            solution.toString(),
-                    style: const TextStyle(color: Colors.white, fontSize: 30))
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            TextButton(
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        side: const BorderSide(
-                          color: Colors.white, // your color here
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(50)))),
-                child: const Text("Continue",
-                    style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  keyTimeWidget.currentState?.stopStartTime();
-                  setState(() {
-                    newGame(false);
-                  });
-                }),
-          ],
-        );
-      },
-    );
+    AwesomeDialog(
+            context: context,
+            animType: AnimType.leftSlide,
+            headerAnimationLoop: false,
+            dialogType: DialogType.info,
+            showCloseIcon: false,
+            title: 'Penalty of -20s',
+            desc: 'Here is one possible solution to the problem:\n\n' +
+                solution.toString(),
+            btnOkOnPress: () {
+              keyTimeWidget.currentState?.stopStartTime();
+              setState(() {
+                newGame(false);
+              });
+            },
+            btnOkIcon: Icons.check_circle,
+            dismissOnTouchOutside: false)
+        .show();
   }
 
-  void _showDivisionErrorMsg() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          key: _divisionErrorDialog,
-          backgroundColor: Colors.red,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          content: const Text('⚠️\nSorry you cannot divide by zero',
-              style: TextStyle(color: Colors.white, fontSize: 30),
-              textAlign: TextAlign.center),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            TextButton(
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        side: const BorderSide(
-                          color: Colors.white, // your color here
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(50)))),
-                child: const Text("Continue",
-                    style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    resetGame();
-                  });
-                }),
-          ],
-        );
-      },
-    );
+  void _showDivisionErrorDialog() {
+    divisionErrorDialog = AwesomeDialog(
+        context: context,
+        animType: AnimType.rightSlide,
+        headerAnimationLoop: false,
+        dialogType: DialogType.error,
+        showCloseIcon: false,
+        title: '⚠️',
+        desc: 'Sorry you cannot divide by zero',
+        btnOkOnPress: () {
+          setState(() {
+            resetGame();
+            divisionErrorDialog = null;
+          });
+        },
+        btnOkIcon: Icons.check_circle,
+        dismissOnTouchOutside: false);
+    divisionErrorDialog.show();
   }
 
   @override
@@ -772,7 +663,8 @@ class _TimedGamePageState extends State<TimedGamePage> {
                 onPressed: () {
                   keyTimeWidget.currentState?.reduceTime();
                   keyTimeWidget.currentState?.stopStartTime();
-                  _showSolutionMsg();
+                  // _showSolutionMsg();
+                  _showSolutionDialog();
                 },
                 child: Icon(Icons.arrow_forward),
                 tooltip: 'Next Game',

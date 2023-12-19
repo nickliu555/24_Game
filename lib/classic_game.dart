@@ -1,4 +1,4 @@
-import 'package:confetti/confetti.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:projects/difficulty.dart';
 import 'package:projects/solutions.dart';
@@ -92,7 +92,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
       if (nums[secondNumUsedIndex] != 0) {
         finalResult = (nums[firstNumUsedIndex] / nums[secondNumUsedIndex]);
       } else {
-        _showDivisionErrorMsg();
+        _showDivisionErrorDialog();
         return;
       }
     }
@@ -208,158 +208,86 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
     if (finalResult == 24) {
       setState(() {
         isNumIndexVisible = [false, false, false, false];
-      });
-    }
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        final confettiController = ConfettiController();
         if (finalResult == 24) {
           clockWidget.stop();
-          confettiController.play();
         }
-        return Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              backgroundColor: finalResult == 24 ? Colors.green : Colors.red,
-              content: finalResult == 24
-                  ? Text(
-                      '🎉👏\nCongrats! You got 24\nYour time was ' +
-                          clockWidget.getMinutes().toString().padLeft(2, "0") +
-                          ":" +
-                          clockWidget.getSeconds().toString().padLeft(2, "0"),
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      textAlign: TextAlign.center)
-                  : Text(
-                      '😔\nSorry, you did not get 24.\nYou got ' +
-                          Fraction.fromDouble(finalResult).toString() +
-                          "\nPlease try again",
-                      style: TextStyle(color: Colors.white, fontSize: 30),
-                      textAlign: TextAlign.center),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                TextButton(
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          side: const BorderSide(
-                            color: Colors.white, // your color here
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(50)))),
-                  child: const Text("Continue",
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () {
-                    if (finalResult == 24) {
-                      setState(() {
-                        clockWidget.reset();
-                        newGame(false);
-                      });
-                    } else {
-                      setState(() {
-                        resetGame();
-                      });
-                    }
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-            ConfettiWidget(
-              confettiController: confettiController,
-              shouldLoop: true,
-              blastDirectionality: BlastDirectionality.explosive,
-              emissionFrequency: 0.05,
-            ),
-          ],
-        );
-      },
-    );
+      });
+    }
+    AwesomeDialog(
+            context: context,
+            animType: AnimType.rightSlide,
+            headerAnimationLoop: false,
+            dialogType:
+                finalResult == 24 ? DialogType.success : DialogType.error,
+            showCloseIcon: false,
+            title: finalResult == 24 ? '🎉👏' : '😔',
+            desc: finalResult == 24
+                ? 'Congrats! You got 24\nYour time was ' +
+                    clockWidget.getMinutes().toString().padLeft(2, "0") +
+                    ":" +
+                    clockWidget.getSeconds().toString().padLeft(2, "0")
+                : 'Sorry, you did not get 24.\nYou got ' +
+                    Fraction.fromDouble(finalResult).toString() +
+                    '\nPlease try again',
+            btnOkOnPress: () {
+              if (finalResult == 24) {
+                setState(() {
+                  clockWidget.reset();
+                  newGame(false);
+                });
+              } else {
+                setState(() {
+                  resetGame();
+                });
+              }
+            },
+            btnOkIcon: Icons.check_circle,
+            dismissOnTouchOutside: false)
+        .show();
   }
 
-  void _showSolutionMsg() {
+  void _showSolutionDialog() {
     setState(() {
       isNumIndexVisible = [false, false, false, false];
+      clockWidget.stop();
     });
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        clockWidget.stop();
-        return AlertDialog(
-          backgroundColor: Colors.indigoAccent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          content: Text(
-              'Here is one possible solution to the problem:\n\n' +
-                  solution.toString(),
-              style: const TextStyle(color: Colors.white, fontSize: 30),
-              textAlign: TextAlign.center),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            TextButton(
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        side: const BorderSide(
-                          color: Colors.white, // your color here
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(50)))),
-                child: const Text("Continue",
-                    style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    clockWidget.reset();
-                    newGame(false);
-                  });
-                }),
-          ],
-        );
-      },
-    );
+    AwesomeDialog(
+            context: context,
+            animType: AnimType.leftSlide,
+            headerAnimationLoop: false,
+            dialogType: DialogType.info,
+            showCloseIcon: false,
+            title: '⏭️',
+            desc: 'Here is one possible solution to the problem:\n\n' +
+                solution.toString(),
+            btnOkOnPress: () {
+              setState(() {
+                clockWidget.reset();
+                newGame(false);
+              });
+            },
+            btnOkIcon: Icons.check_circle,
+            dismissOnTouchOutside: false)
+        .show();
   }
 
-  void _showDivisionErrorMsg() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.red,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          content: const Text('⚠️\nSorry you cannot divide by zero',
-              style: TextStyle(color: Colors.white, fontSize: 30),
-              textAlign: TextAlign.center),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            TextButton(
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        side: const BorderSide(
-                          color: Colors.white, // your color here
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(50)))),
-                child: const Text("Continue",
-                    style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    resetGame();
-                  });
-                }),
-          ],
-        );
-      },
-    );
+  void _showDivisionErrorDialog() {
+    AwesomeDialog(
+            context: context,
+            animType: AnimType.rightSlide,
+            headerAnimationLoop: false,
+            dialogType: DialogType.error,
+            showCloseIcon: false,
+            title: '⚠️',
+            desc: 'Sorry you cannot divide by zero',
+            btnOkOnPress: () {
+              setState(() {
+                resetGame();
+              });
+            },
+            btnOkIcon: Icons.check_circle,
+            dismissOnTouchOutside: false)
+        .show();
   }
 
   @override
@@ -699,7 +627,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
                 heroTag: "next_game_button",
                 backgroundColor: Colors.indigoAccent,
                 onPressed: () {
-                  _showSolutionMsg();
+                  _showSolutionDialog();
                 },
                 child: Icon(Icons.arrow_forward),
                 tooltip: 'Next Game',
