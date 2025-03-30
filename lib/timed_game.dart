@@ -103,8 +103,8 @@ class _TimedGamePageState extends State<TimedGamePage> {
     }
 
     setState(() {
-      nums[firstNumUsedIndex] = finalResult;
-      isNumIndexVisible[secondNumUsedIndex] = false;
+      nums[secondNumUsedIndex] = finalResult;
+      isNumIndexVisible[firstNumUsedIndex] = false;
 
       expectNum = true;
       turn = 0;

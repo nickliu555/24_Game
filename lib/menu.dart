@@ -42,7 +42,7 @@ class _MyMenuPageState extends State<MyMenuPage> {
           children: <Widget>[
             Image(
                 image: NetworkImage(
-                    'https://www.24game.com/skins/24game/images/24game-logo.png')),
+                    'https://www.24game.com/cdn/shop/files/download.png')),
             Padding(padding: EdgeInsets.only(bottom: 30.0)),
             ButtonTheme(
                 minWidth: 50.0,

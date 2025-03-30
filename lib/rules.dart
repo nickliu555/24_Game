@@ -32,10 +32,10 @@ class _MyRulesPageState extends State<RulesPage> {
                 padding: const EdgeInsets.all(3.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Color(0xFF9FA8DA),
+                  color: Colors.indigo.shade100,
                   border: Border.all(
-                    color: Colors.indigoAccent,
-                    width: 7,
+                    color: Colors.indigo.shade100,
+                    width: 2,
                   ),
                 ),
                 child: Column(
