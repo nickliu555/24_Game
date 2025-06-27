@@ -205,14 +205,12 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
   }
 
   void _showResultDialog() {
-    if (finalResult == 24) {
-      setState(() {
-        isNumIndexVisible = [false, false, false, false];
-        if (finalResult == 24) {
-          clockWidget.stop();
-        }
-      });
-    }
+    setState(() {
+      isNumIndexVisible = [false, false, false, false];
+      if (finalResult == 24) {
+        clockWidget.stop();
+      }
+    });
     AwesomeDialog(
             context: context,
             animType: AnimType.rightSlide,
@@ -320,7 +318,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
                         ignoring: !isNumIndexVisible[0],
                         child: AnimatedOpacity(
                             opacity: isNumIndexVisible[0] ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 750),
+                            duration: isNumIndexVisible[0] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -361,7 +359,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
                         ignoring: !isNumIndexVisible[1],
                         child: AnimatedOpacity(
                             opacity: isNumIndexVisible[1] ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 750),
+                            duration: isNumIndexVisible[1] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -406,7 +404,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
                         ignoring: !isNumIndexVisible[2],
                         child: AnimatedOpacity(
                             opacity: isNumIndexVisible[2] ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 750),
+                            duration: isNumIndexVisible[2] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -447,7 +445,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
                         ignoring: !isNumIndexVisible[3],
                         child: AnimatedOpacity(
                             opacity: isNumIndexVisible[3] ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 750),
+                            duration: isNumIndexVisible[3] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -613,14 +611,14 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               FloatingActionButton(
-                heroTag: "refresh_button",
+                heroTag: "undo_button",
                 backgroundColor: Colors.indigoAccent,
                 onPressed: () {
                   setState(() {
                     resetGame();
                   });
                 },
-                child: Icon(Icons.refresh),
+                child: Icon(Icons.skip_previous),
                 tooltip: 'Reset Game',
               ),
               FloatingActionButton(
@@ -629,7 +627,7 @@ class _ClassicGamePageState extends State<ClassicGamePage> {
                 onPressed: () {
                   _showSolutionDialog();
                 },
-                child: Icon(Icons.arrow_forward),
+                child: Icon(Icons.navigate_next),
                 tooltip: 'Next Game',
               )
             ],
