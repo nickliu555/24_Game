@@ -13,31 +13,44 @@ var rng = Random();
 
 List<List<int>> allSolvableProblems = getProblems();
 Map<String, String> problemToSolutionMap = getProblemSolutionMap();
-Set<int> problemIndexSeen = {};
-List<int> shuffledProblem = [];
+
+List<List<int>> validProblems = [];
+List<int> currProblem = [];
 String? solution = "";
 
-int firstNum = -1;
-int secondNum = -1;
-int thirdNum = -1;
-int fourthNum = -1;
+class GameState {
+  late List<double> nums;
+  List<bool> isNumIndexVisible;
+  int firstNumUsedIndex;
+  int secondNumUsedIndex;
+  String operationUsed;
 
-List<double> nums = [
-  firstNum.toDouble(),
-  secondNum.toDouble(),
-  thirdNum.toDouble(),
-  fourthNum.toDouble()
-];
+  GameState({
+    this.isNumIndexVisible = const [false, false, false, false],
+    this.firstNumUsedIndex = -1,
+    this.secondNumUsedIndex = -1,
+    this.operationUsed = '_'
+  }) {
+    nums = [
+      currProblem[0].toDouble(),
+      currProblem[1].toDouble(),
+      currProblem[2].toDouble(),
+      currProblem[3].toDouble()
+    ];
+  }
 
-List<bool> isNumIndexVisible = [false, false, false, false];
-int firstNumUsedIndex = -1;
-int secondNumUsedIndex = -1;
-String operationUsed = '_';
+  // Copy constructor
+  GameState.copy(GameState other)
+      : isNumIndexVisible = List.from(other.isNumIndexVisible),
+        firstNumUsedIndex = other.firstNumUsedIndex,
+        secondNumUsedIndex = other.secondNumUsedIndex,
+        operationUsed = other.operationUsed {
+    nums = List.from(other.nums);
+  }
+}
 
-bool expectNum = true;
-int turn = 0;
+List<GameState> gameStateStack = [];
 
-double finalResult = 0;
 int numProblemsCompleted = 0;
 GlobalKey<TimerWidgetState> keyTimeWidget = GlobalKey();
 var divisionErrorDialog = null;
@@ -74,28 +87,41 @@ class _TimedGamePageState extends State<TimedGamePage> {
     numProblemsCompleted = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        isNumIndexVisible = [true, true, true, true];
+        gameStateStack.last.isNumIndexVisible = [true, true, true, true];
       });
     });
   }
 
   bool readyToCreateNewNumber() {
-    return turn >= 1 && secondNumUsedIndex != -1;
+    return gameStateStack.last.secondNumUsedIndex != -1;
+  }
+
+  bool expectNum() {
+    if (gameStateStack.last.firstNumUsedIndex == -1 ||
+        (gameStateStack.last.operationUsed != '_' && gameStateStack.last.secondNumUsedIndex == -1)) {
+      return true;
+    }
+    return false;
   }
 
   void handleCreateNewNum() {
-    if (operationUsed == '+') {
+    double finalResult = 0;
+    if (gameStateStack.last.operationUsed == '+') {
       finalResult =
-          nums[firstNumUsedIndex] + nums[secondNumUsedIndex].toDouble();
-    } else if (operationUsed == '-') {
+          gameStateStack.last.nums[gameStateStack.last.firstNumUsedIndex]
+              + gameStateStack.last.nums[gameStateStack.last.secondNumUsedIndex].toDouble();
+    } else if (gameStateStack.last.operationUsed == '-') {
       finalResult =
-          nums[firstNumUsedIndex] - nums[secondNumUsedIndex].toDouble();
-    } else if (operationUsed == '×') {
+          gameStateStack.last.nums[gameStateStack.last.firstNumUsedIndex]
+              - gameStateStack.last.nums[gameStateStack.last.secondNumUsedIndex].toDouble();
+    } else if (gameStateStack.last.operationUsed == '×') {
       finalResult =
-          nums[firstNumUsedIndex] * nums[secondNumUsedIndex].toDouble();
-    } else if (operationUsed == '÷') {
-      if (nums[secondNumUsedIndex] != 0) {
-        finalResult = (nums[firstNumUsedIndex] / nums[secondNumUsedIndex]);
+          gameStateStack.last.nums[gameStateStack.last.firstNumUsedIndex]
+              * gameStateStack.last.nums[gameStateStack.last.secondNumUsedIndex].toDouble();
+    } else if (gameStateStack.last.operationUsed == '÷') {
+      if (gameStateStack.last.nums[gameStateStack.last.secondNumUsedIndex] != 0) {
+        finalResult = (gameStateStack.last.nums[gameStateStack.last.firstNumUsedIndex]
+            / gameStateStack.last.nums[gameStateStack.last.secondNumUsedIndex]);
       } else {
         _showDivisionErrorDialog();
         return;
@@ -103,46 +129,38 @@ class _TimedGamePageState extends State<TimedGamePage> {
     }
 
     setState(() {
-      nums[secondNumUsedIndex] = finalResult;
-      isNumIndexVisible[firstNumUsedIndex] = false;
+      gameStateStack.last.nums[gameStateStack.last.secondNumUsedIndex] = finalResult;
+      gameStateStack.last.isNumIndexVisible[gameStateStack.last.firstNumUsedIndex] = false;
 
-      expectNum = true;
-      turn = 0;
-      firstNumUsedIndex = -1;
-      secondNumUsedIndex = -1;
-      operationUsed = '_';
+      gameStateStack.last.firstNumUsedIndex = -1;
+      gameStateStack.last.secondNumUsedIndex = -1;
+      gameStateStack.last.operationUsed = '_';
 
       int numLeftToUse = 4;
       for (int i = 0; i < 4; ++i) {
-        if (!isNumIndexVisible[i]) {
+        if (!gameStateStack.last.isNumIndexVisible[i]) {
           --numLeftToUse;
         }
       }
       // have used all numbers
       if (numLeftToUse <= 1) {
-        if (finalResult == 24) keyTimeWidget.currentState?.stopStartTime();
-        _showResultDialog();
+        _showResultDialog(finalResult);
       }
     });
   }
 
   void resetGame() {
-    nums = [
-      firstNum.toDouble(),
-      secondNum.toDouble(),
-      thirdNum.toDouble(),
-      fourthNum.toDouble()
+    gameStateStack.last.nums = [
+      currProblem[0].toDouble(),
+      currProblem[1].toDouble(),
+      currProblem[2].toDouble(),
+      currProblem[3].toDouble()
     ];
 
-    isNumIndexVisible = [true, true, true, true];
-    firstNumUsedIndex = -1;
-    secondNumUsedIndex = -1;
-    operationUsed = '_';
-
-    expectNum = true;
-    turn = 0;
-
-    finalResult = 0;
+    gameStateStack.last.isNumIndexVisible = [true, true, true, true];
+    gameStateStack.last.firstNumUsedIndex = -1;
+    gameStateStack.last.secondNumUsedIndex = -1;
+    gameStateStack.last.operationUsed = '_';
   }
 
   void newGame(bool firstGame) {
@@ -160,54 +178,42 @@ class _TimedGamePageState extends State<TimedGamePage> {
       start = secondThirdCutoff;
     }
 
-    int randomProblemIndex = start + rng.nextInt(end - start);
-
-    // if its first game or we have already completed all problems
-    if (firstGame || problemIndexSeen.length == (end - start + 1)) {
-      problemIndexSeen = {};
+    // if this is the first game, get all of the valid problems for this difficulty level
+    // and shuffle all of the problems in random order.
+    // Note: we treat the first problem of validProblems as the current problem
+    if (firstGame) {
+      validProblems = allSolvableProblems.sublist(start, end);
+      validProblems.shuffle();
     }
-    // make sure new problem is not seen before
-    while (problemIndexSeen.contains(randomProblemIndex)) {
-      randomProblemIndex = rng.nextInt(allSolvableProblems.length);
-    }
-    problemIndexSeen.add(randomProblemIndex);
-    print('randomProblemIndex = ' + randomProblemIndex.toString());
 
     String problemString = "";
-    for (int num in allSolvableProblems[randomProblemIndex]) {
+    for (int num in validProblems.first) {
       problemString += (num.toString() + " ");
     }
-    problemString = problemString.substring(
-        0, problemString.length - 1); // remove last space
+    problemString = problemString.substring(0, problemString.length - 1); // remove last space
     print('problemString = ' + problemString);
     solution = problemToSolutionMap[problemString];
     print('solution = ' + solution.toString());
-    shuffledProblem = shuffleList(allSolvableProblems[randomProblemIndex]);
+    currProblem = shuffleList(validProblems.first); // reorder the numbers in the problem randomly
+    validProblems.removeAt(0); // remove this problem from the list
 
-    firstNum = shuffledProblem[0];
-    secondNum = shuffledProblem[1];
-    thirdNum = shuffledProblem[2];
-    fourthNum = shuffledProblem[3];
+    gameStateStack.clear();
+    gameStateStack.add(GameState());
 
-    nums = [
-      firstNum.toDouble(),
-      secondNum.toDouble(),
-      thirdNum.toDouble(),
-      fourthNum.toDouble()
+    gameStateStack.last.nums = [
+      currProblem[0].toDouble(),
+      currProblem[1].toDouble(),
+      currProblem[2].toDouble(),
+      currProblem[3].toDouble()
     ];
 
-    isNumIndexVisible = [true, true, true, true];
+    gameStateStack.last.isNumIndexVisible = [true, true, true, true];
     if (firstGame) {
-      isNumIndexVisible = [false, false, false, false];
+      gameStateStack.last.isNumIndexVisible = [false, false, false, false];
     }
-    firstNumUsedIndex = -1;
-    secondNumUsedIndex = -1;
-    operationUsed = '_';
-
-    expectNum = true;
-    turn = 0;
-
-    finalResult = 0;
+    gameStateStack.last.firstNumUsedIndex = -1;
+    gameStateStack.last.secondNumUsedIndex = -1;
+    gameStateStack.last.operationUsed = '_';
   }
 
   bool isAlertDialogShowing(BuildContext context) {
@@ -241,9 +247,9 @@ class _TimedGamePageState extends State<TimedGamePage> {
         .show();
   }
 
-  void _showResultDialog() {
+  void _showResultDialog(double finalResult) {
     setState(() {
-      isNumIndexVisible = [false, false, false, false];
+      gameStateStack.last.isNumIndexVisible = [false, false, false, false];
       if (finalResult == 24) {
         ++numProblemsCompleted;
       }
@@ -280,7 +286,7 @@ class _TimedGamePageState extends State<TimedGamePage> {
 
   void _showSolutionDialog() {
     setState(() {
-      isNumIndexVisible = [false, false, false, false];
+      gameStateStack.last.isNumIndexVisible = [false, false, false, false];
     });
     AwesomeDialog(
             context: context,
@@ -349,10 +355,10 @@ class _TimedGamePageState extends State<TimedGamePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     IgnorePointer(
-                        ignoring: !isNumIndexVisible[0],
+                        ignoring: !gameStateStack.last.isNumIndexVisible[0],
                         child: AnimatedOpacity(
-                            opacity: isNumIndexVisible[0] ? 1.0 : 0.0,
-                            duration: isNumIndexVisible[0] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
+                            opacity: gameStateStack.last.isNumIndexVisible[0] ? 1.0 : 0.0,
+                            duration: gameStateStack.last.isNumIndexVisible[0] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -362,18 +368,19 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                           BorderRadius.circular(32.0)),
                                   minimumSize: const Size(100, 80),
                                   primary: difficultyToColor[getDifficulty()]),
-                              onPressed: firstNumUsedIndex == 0 ||
-                                      secondNumUsedIndex == 0 ||
-                                      !expectNum
+                              onPressed: gameStateStack.last.firstNumUsedIndex == 0 ||
+                                  gameStateStack.last.secondNumUsedIndex == 0 ||
+                                      !expectNum()
                                   ? null
                                   : () {
                                       setState(() {
-                                        if (turn == 0) {
-                                          firstNumUsedIndex = 0;
+                                        // create new GameState
+                                        gameStateStack.add(GameState.copy(gameStateStack.last));
+                                        if (gameStateStack.last.firstNumUsedIndex == -1) {
+                                          gameStateStack.last.firstNumUsedIndex = 0;
                                         } else {
-                                          secondNumUsedIndex = 0;
+                                          gameStateStack.last.secondNumUsedIndex = 0;
                                         }
-                                        expectNum = false;
                                       });
 
                                       if (readyToCreateNewNumber()) {
@@ -381,7 +388,7 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                       }
                                     },
                               child: Text(
-                                Fraction.fromDouble(nums[0]).toString(),
+                                Fraction.fromDouble(gameStateStack.last.nums[0]).toString(),
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -390,10 +397,10 @@ class _TimedGamePageState extends State<TimedGamePage> {
                             ))),
                     const Padding(padding: EdgeInsets.only(right: 30.0)),
                     IgnorePointer(
-                        ignoring: !isNumIndexVisible[1],
+                        ignoring: !gameStateStack.last.isNumIndexVisible[1],
                         child: AnimatedOpacity(
-                            opacity: isNumIndexVisible[1] ? 1.0 : 0.0,
-                            duration: isNumIndexVisible[1] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
+                            opacity: gameStateStack.last.isNumIndexVisible[1] ? 1.0 : 0.0,
+                            duration: gameStateStack.last.isNumIndexVisible[1] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -403,18 +410,19 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                           BorderRadius.circular(32.0)),
                                   minimumSize: const Size(100, 80),
                                   primary: difficultyToColor[getDifficulty()]),
-                              onPressed: firstNumUsedIndex == 1 ||
-                                      secondNumUsedIndex == 1 ||
-                                      !expectNum
+                              onPressed: gameStateStack.last.firstNumUsedIndex == 1 ||
+                                  gameStateStack.last.secondNumUsedIndex == 1 ||
+                                      !expectNum()
                                   ? null
                                   : () {
                                       setState(() {
-                                        if (turn == 0) {
-                                          firstNumUsedIndex = 1;
+                                        // create new GameState
+                                        gameStateStack.add(GameState.copy(gameStateStack.last));
+                                        if (gameStateStack.last.firstNumUsedIndex == -1) {
+                                          gameStateStack.last.firstNumUsedIndex = 1;
                                         } else {
-                                          secondNumUsedIndex = 1;
+                                          gameStateStack.last.secondNumUsedIndex = 1;
                                         }
-                                        expectNum = false;
                                       });
 
                                       if (readyToCreateNewNumber()) {
@@ -422,7 +430,7 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                       }
                                     },
                               child: Text(
-                                Fraction.fromDouble(nums[1]).toString(),
+                                Fraction.fromDouble(gameStateStack.last.nums[1]).toString(),
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -435,10 +443,10 @@ class _TimedGamePageState extends State<TimedGamePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     IgnorePointer(
-                        ignoring: !isNumIndexVisible[2],
+                        ignoring: !gameStateStack.last.isNumIndexVisible[2],
                         child: AnimatedOpacity(
-                            opacity: isNumIndexVisible[2] ? 1.0 : 0.0,
-                            duration: isNumIndexVisible[2] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
+                            opacity: gameStateStack.last.isNumIndexVisible[2] ? 1.0 : 0.0,
+                            duration: gameStateStack.last.isNumIndexVisible[2] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -448,18 +456,19 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                           BorderRadius.circular(32.0)),
                                   minimumSize: const Size(100, 80),
                                   primary: difficultyToColor[getDifficulty()]),
-                              onPressed: firstNumUsedIndex == 2 ||
-                                      secondNumUsedIndex == 2 ||
-                                      !expectNum
+                              onPressed: gameStateStack.last.firstNumUsedIndex == 2 ||
+                                  gameStateStack.last.secondNumUsedIndex == 2 ||
+                                      !expectNum()
                                   ? null
                                   : () {
                                       setState(() {
-                                        if (turn == 0) {
-                                          firstNumUsedIndex = 2;
+                                        // create new GameState
+                                        gameStateStack.add(GameState.copy(gameStateStack.last));
+                                        if (gameStateStack.last.firstNumUsedIndex == -1) {
+                                          gameStateStack.last.firstNumUsedIndex = 2;
                                         } else {
-                                          secondNumUsedIndex = 2;
+                                          gameStateStack.last.secondNumUsedIndex = 2;
                                         }
-                                        expectNum = false;
                                       });
 
                                       if (readyToCreateNewNumber()) {
@@ -467,7 +476,7 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                       }
                                     },
                               child: Text(
-                                Fraction.fromDouble(nums[2]).toString(),
+                                Fraction.fromDouble(gameStateStack.last.nums[2]).toString(),
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -476,10 +485,10 @@ class _TimedGamePageState extends State<TimedGamePage> {
                             ))),
                     const Padding(padding: EdgeInsets.only(right: 30.0)),
                     IgnorePointer(
-                        ignoring: !isNumIndexVisible[3],
+                        ignoring: !gameStateStack.last.isNumIndexVisible[3],
                         child: AnimatedOpacity(
-                            opacity: isNumIndexVisible[3] ? 1.0 : 0.0,
-                            duration: isNumIndexVisible[3] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
+                            opacity: gameStateStack.last.isNumIndexVisible[3] ? 1.0 : 0.0,
+                            duration: gameStateStack.last.isNumIndexVisible[3] ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   shadowColor: Colors.black,
@@ -489,18 +498,19 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                           BorderRadius.circular(32.0)),
                                   minimumSize: const Size(100, 80),
                                   primary: difficultyToColor[getDifficulty()]),
-                              onPressed: firstNumUsedIndex == 3 ||
-                                      secondNumUsedIndex == 3 ||
-                                      !expectNum
+                              onPressed: gameStateStack.last.firstNumUsedIndex == 3 ||
+                                  gameStateStack.last.secondNumUsedIndex == 3 ||
+                                      !expectNum()
                                   ? null
                                   : () {
                                       setState(() {
-                                        if (turn == 0) {
-                                          firstNumUsedIndex = 3;
+                                        // create new GameState
+                                        gameStateStack.add(GameState.copy(gameStateStack.last));
+                                        if (gameStateStack.last.firstNumUsedIndex == -1) {
+                                          gameStateStack.last.firstNumUsedIndex = 3;
                                         } else {
-                                          secondNumUsedIndex = 3;
+                                          gameStateStack.last.secondNumUsedIndex = 3;
                                         }
-                                        expectNum = false;
                                       });
 
                                       if (readyToCreateNewNumber()) {
@@ -508,7 +518,7 @@ class _TimedGamePageState extends State<TimedGamePage> {
                                       }
                                     },
                               child: Text(
-                                Fraction.fromDouble(nums[3]).toString(),
+                                Fraction.fromDouble(gameStateStack.last.nums[3]).toString(),
                                 style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -525,20 +535,20 @@ class _TimedGamePageState extends State<TimedGamePage> {
                         minWidth: 50.0,
                         height: 50.0,
                         child: OutlinedButton(
-                            onPressed: turn > 0 || expectNum
+                            onPressed: expectNum()
                                 ? null
                                 : () {
                                     setState(() {
-                                      operationUsed = '+';
+                                      // create new GameState
+                                      gameStateStack.add(GameState.copy(gameStateStack.last));
+                                      gameStateStack.last.operationUsed = '+';
                                     });
-                                    expectNum = true;
-                                    ++turn;
                                   },
                             child: Text('+',
                                 style: TextStyle(
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold,
-                                    color: turn > 0 || expectNum
+                                    color: expectNum()
                                         ? Colors.grey
                                         : difficultyToColor[
                                             getDifficulty()])))),
@@ -546,20 +556,20 @@ class _TimedGamePageState extends State<TimedGamePage> {
                         minWidth: 50.0,
                         height: 50.0,
                         child: OutlinedButton(
-                            onPressed: turn > 0 || expectNum
+                            onPressed: expectNum()
                                 ? null
                                 : () {
                                     setState(() {
-                                      operationUsed = '-';
+                                      // create new GameState
+                                      gameStateStack.add(GameState.copy(gameStateStack.last));
+                                      gameStateStack.last.operationUsed = '-';
                                     });
-                                    expectNum = true;
-                                    ++turn;
                                   },
                             child: Text('-',
                                 style: TextStyle(
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold,
-                                    color: turn > 0 || expectNum
+                                    color: expectNum()
                                         ? Colors.grey
                                         : difficultyToColor[
                                             getDifficulty()])))),
@@ -567,20 +577,20 @@ class _TimedGamePageState extends State<TimedGamePage> {
                         minWidth: 50.0,
                         height: 50.0,
                         child: OutlinedButton(
-                            onPressed: turn > 0 || expectNum
+                            onPressed: expectNum()
                                 ? null
                                 : () {
                                     setState(() {
-                                      operationUsed = '×';
+                                      // create new GameState
+                                      gameStateStack.add(GameState.copy(gameStateStack.last));
+                                      gameStateStack.last.operationUsed = '×';
                                     });
-                                    expectNum = true;
-                                    ++turn;
                                   },
                             child: Text('×',
                                 style: TextStyle(
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold,
-                                    color: turn > 0 || expectNum
+                                    color: expectNum()
                                         ? Colors.grey
                                         : difficultyToColor[
                                             getDifficulty()])))),
@@ -588,20 +598,20 @@ class _TimedGamePageState extends State<TimedGamePage> {
                         minWidth: 50.0,
                         height: 50.0,
                         child: OutlinedButton(
-                            onPressed: turn > 0 || expectNum
+                            onPressed: expectNum()
                                 ? null
                                 : () {
                                     setState(() {
-                                      operationUsed = '÷';
+                                      // create new GameState
+                                      gameStateStack.add(GameState.copy(gameStateStack.last));
+                                      gameStateStack.last.operationUsed = '÷';
                                     });
-                                    expectNum = true;
-                                    ++turn;
                                   },
                             child: Text('÷',
                                 style: TextStyle(
                                     fontSize: 25,
                                     fontWeight: FontWeight.bold,
-                                    color: turn > 0 || expectNum
+                                    color: expectNum()
                                         ? Colors.grey
                                         : difficultyToColor[
                                             getDifficulty()])))),
@@ -615,23 +625,23 @@ class _TimedGamePageState extends State<TimedGamePage> {
                         padding:
                             const EdgeInsets.only(right: 10.0, bottom: 30.0),
                         child: Text(
-                            firstNumUsedIndex == -1
+                            gameStateStack.last.firstNumUsedIndex == -1
                                 ? "_"
-                                : Fraction.fromDouble(nums[firstNumUsedIndex])
+                                : Fraction.fromDouble(gameStateStack.last.nums[gameStateStack.last.firstNumUsedIndex])
                                     .toString(),
                             style: const TextStyle(fontSize: 26))),
                     Padding(
                         padding: const EdgeInsets.only(
                             left: 10.0, right: 10.0, bottom: 30.0),
-                        child: Text(operationUsed,
+                        child: Text(gameStateStack.last.operationUsed,
                             style: const TextStyle(fontSize: 26))),
                     Padding(
                         padding:
                             const EdgeInsets.only(left: 10.0, bottom: 30.0),
                         child: Text(
-                            secondNumUsedIndex == -1
+                            gameStateStack.last.secondNumUsedIndex == -1
                                 ? "_"
-                                : Fraction.fromDouble(nums[secondNumUsedIndex])
+                                : Fraction.fromDouble(gameStateStack.last.nums[gameStateStack.last.secondNumUsedIndex])
                                     .toString(),
                             style: const TextStyle(fontSize: 26)))
                   ]),
@@ -643,30 +653,64 @@ class _TimedGamePageState extends State<TimedGamePage> {
           padding: const EdgeInsets.all(20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              FloatingActionButton(
-                heroTag: "undo_button",
-                backgroundColor: Colors.indigoAccent,
-                onPressed: () {
-                  setState(() {
-                    resetGame();
-                  });
-                },
-                child: Icon(Icons.skip_previous),
-                tooltip: 'Reset Game',
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(
+                width: 130,
+                height: 56,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 0,
+                      child: FloatingActionButton(
+                        heroTag: "reset_button",
+                        backgroundColor: Colors.indigoAccent,
+                        onPressed: () {
+                          setState(() {
+                            gameStateStack.last.isNumIndexVisible = [false, false, false, false];
+                          });
+                          Future.delayed(Duration(milliseconds: 30), () {
+                            setState(() {
+                              resetGame();
+                            });
+                          });
+                        },
+                        child: Icon(Icons.skip_previous),
+                        tooltip: 'Reset Game',
+                      ),
+                    ),
+                    Positioned(
+                      left: 70,
+                      child: FloatingActionButton(
+                        heroTag: "undo_button",
+                        backgroundColor: (gameStateStack.length > 1) ? Colors.indigoAccent : Colors.grey,
+                        onPressed: () {
+                          if (gameStateStack.length > 1) {
+                            setState(() {
+                              gameStateStack.removeLast();
+                            });
+                          }
+                        },
+                        child: Icon(Icons.refresh),
+                        tooltip: 'Undo Button',
+                      ),
+                    ),
+                  ],
+                ),
               ),
+
+              // Right side button
               FloatingActionButton(
                 heroTag: "next_game_button",
                 backgroundColor: Colors.indigoAccent,
                 onPressed: () {
                   keyTimeWidget.currentState?.reduceTime();
                   keyTimeWidget.currentState?.stopStartTime();
-                  // _showSolutionMsg();
                   _showSolutionDialog();
                 },
                 child: Icon(Icons.navigate_next),
                 tooltip: 'Next Game',
-              )
+              ),
             ],
           ),
         ));
